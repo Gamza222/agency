@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // Override JSX for Jest testing
+    "jsx": "react-jsx",
+    // Override module resolution for Jest
+    "module": "commonjs",
+    "moduleResolution": "node",
+    // Use balanced TypeScript settings for tests
+    "strict": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": false, // Allow unused locals in tests for flexibility
+    "noUnusedParameters": false, // Allow unused parameters in tests
+    "exactOptionalPropertyTypes": false, // Temporarily relaxed for tests
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false, // Allow unchecked access in tests
+    "noImplicitOverride": true,
+    // Ensure TypeScript errors cause test failures
+    "noEmit": true,
+    "skipLibCheck": true,
+    // Enable esModuleInterop for Jest
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["**/*.ts", "**/*.tsx", "../../src/**/*.ts", "../../src/**/*.tsx"],
+  "exclude": ["node_modules", "**/*.js"]
+}

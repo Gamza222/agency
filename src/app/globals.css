@@ -1,0 +1,201 @@
+/* Global CSS file for Next.js App Router */
+
+/* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:root {
+  /* Original font sizes - scale normally until 1200px */
+  --font-size-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem); /* 12px - 14px */
+  --font-size-base: clamp(0.875rem, 0.85rem + 0.25vw, 1rem); /* 14px - 16px */
+  --font-size-lg: clamp(1rem, 0.95rem + 0.25vw, 1.125rem); /* 16px - 18px */
+  --font-size-xl: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem); /* 18px - 20px */
+  --font-size-2xl: clamp(1.5rem, 1.4rem + 0.5vw, 1.75rem); /* 24px - 28px */
+  --font-size-3xl: clamp(1.75rem, 1.6rem + 0.75vw, 2rem); /* 28px - 32px */
+  --font-size-4xl: clamp(2rem, 1.8rem + 1vw, 2.5rem); /* 32px - 40px */
+  --font-size-5xl: clamp(2.5rem, 2.2rem + 1.5vw, 3rem); /* 40px - 48px */
+  --font-size-percentage: clamp(4rem, 12vw, 100rem); /* 12px - 14px */
+
+  /* colors */
+  --color-white: #fff;
+  --color-black: #14100c;
+  --red-color: #e3170a;
+  --green-color: #5eeb5b;
+
+  /* Navbar styling variables */
+  --logo-height: 20px;
+  --padding-desktop-side: 20px;
+  --padding-desktop-top: 5px;
+  --padding-mobile-side: 7px;
+  --padding-mobile-top: 4px;
+}
+
+/* Body styles */
+html,
+body {
+  /* clip instead of hidden: prevents horizontal scroll on mobile without
+     creating a new scroll container (which breaks position:fixed and transforms) */
+  overflow-x: clip;
+  overscroll-behavior: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family:
+    "Open Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  line-height: 1.5;
+  color: #1f2937;
+  background-color: #ffffff;
+}
+
+/* Dark theme support */
+[data-theme="dark"] body {
+  color: #f9fafb;
+  background-color: #111827;
+}
+
+/* Basic typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.5rem;
+}
+h3 {
+  font-size: 1.25rem;
+}
+h4 {
+  font-size: 1.125rem;
+}
+h5 {
+  font-size: 1rem;
+}
+h6 {
+  font-size: 0.875rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+/* Links */
+a {
+  color: #2563eb;
+  text-decoration: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:focus,
+a:focus-visible,
+a:active {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Buttons - Remove all default browser effects */
+button {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+button:focus,
+button:focus-visible,
+button:active,
+button:hover {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Remove focus outlines globally */
+*:focus,
+*:focus-visible {
+  outline: none;
+}
+
+/* Remove tap highlight on all interactive elements */
+a,
+button,
+input,
+textarea,
+select,
+[role="button"],
+[tabindex] {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.app {
+  padding-top: calc(var(--logo-height) + var(--padding-desktop-top) * 2 + 10px);
+  padding-bottom: 10px;
+  /* padding-left: var(--padding-desktop-side);
+  padding-right: var(--padding-desktop-side); */
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding-top: calc(
+      var(--logo-height) * 1.2 + var(--padding-mobile-top) * 2 + 10px
+    );
+    padding-bottom: 10px;
+    /* padding-left: var(--padding-mobile-side); */
+    /* padding-right: var(--padding-mobile-side); */
+  }
+}
+
+/* Large screens: vw-based scaling from 1200px onwards */
+@media (min-width: 1200px) {
+  :root {
+    /* Font sizes use vw directly - scales proportionally with viewport width */
+    /* At 1200px: 1vw = 12px, so values are calculated to match current sizes */
+    /* These scale continuously as viewport grows (e.g., at 4000px: 1vw = 40px) */
+    --font-size-sm: 1.05vw; /* 14px at 1200px, ~47px at 4000px */
+    --font-size-base: 1.133vw; /* 16px at 1200px, ~53px at 4000px */
+    /* font-size-lg: scales from 18px at 1200px to 35px at 4000px */
+    /* Formula: 0.67rem + 0.0379vw gives 1.125rem at 12vw and 2.1875rem at 40vw */
+    --font-size-lg: 1.23vw;
+    --font-size-xl: 1.667vw; /* 20px at 1200px, ~67px at 4000px */
+    --font-size-2xl: 2.333vw; /* 28px at 1200px, ~93px at 4000px */
+    --font-size-3xl: 2.667vw; /* 32px at 1200px, ~107px at 4000px */
+    --font-size-4xl: 3.333vw; /* 40px at 1200px, ~133px at 4000px */
+    --font-size-5xl: 4vw; /* 48px at 1200px, ~160px at 4000px */
+
+    --logo-height: 1.4vw;
+  }
+}

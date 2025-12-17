@@ -1,0 +1,19 @@
+.highlightsInfo {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-black, #14100c);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-desktop-side);
+
+  @media (max-width: 768px) {
+    padding: var(--padding-mobile-side);
+  }
+}
+
+.highlightsInfo__content {
+  color: var(--color-white, #fff);
+  text-align: center;
+}

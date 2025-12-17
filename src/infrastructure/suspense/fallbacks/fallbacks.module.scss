@@ -1,0 +1,152 @@
+// Suspense Fallbacks SCSS Module - NO Tailwind
+
+.spinner {
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.spinnerSmall {
+  width: 16px;
+  height: 16px;
+}
+
+.spinnerMedium {
+  width: 24px;
+  height: 24px;
+}
+
+.spinnerLarge {
+  width: 32px;
+  height: 32px;
+}
+
+.componentFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.componentFallbackSmall {
+  height: 64px;
+}
+
+.componentFallbackMedium {
+  height: 96px;
+}
+
+.componentFallbackLarge {
+  height: 128px;
+}
+
+.componentFallbackFull {
+  height: 100%;
+}
+
+.componentContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.componentText {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.pageFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // min-height: 100vh;
+  background-color: white;
+}
+
+.pageContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.pageText {
+  font-size: 18px;
+  color: #4b5563;
+}
+
+.defaultFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.defaultContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.defaultText {
+  font-size: 16px;
+  color: #4b5563;
+}
+
+.inlineFallback {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.cardFallback {
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  padding: 16px;
+  gap: 12px;
+  animation: pulse 2s infinite;
+}
+
+.cardLine {
+  background-color: #e5e7eb;
+  border-radius: 4px;
+}
+
+.cardLine1 {
+  height: 16px;
+  width: 75%;
+}
+
+.cardLine2 {
+  height: 12px;
+  width: 50%;
+}
+
+.cardLine3 {
+  height: 12px;
+  width: 66%;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

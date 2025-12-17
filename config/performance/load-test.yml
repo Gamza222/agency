@@ -1,0 +1,117 @@
+# ============================================================================
+# LOAD TESTING CONFIGURATION
+# ============================================================================
+# Artillery.js load testing configuration for performance testing
+# Run with: artillery run config/performance/load-test.yml
+
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalRate: 1
+      name: 'Warm up'
+
+    # Ramp-up phase
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 20
+      name: 'Ramp up load'
+
+    # Sustained load phase
+    - duration: 120
+      arrivalRate: 20
+      name: 'Sustained load'
+
+    # Peak load phase
+    - duration: 60
+      arrivalRate: 50
+      name: 'Peak load'
+
+    # Cool-down phase
+    - duration: 30
+      arrivalRate: 10
+      name: 'Cool down'
+
+  # Global settings
+  defaults:
+    headers:
+      User-Agent: 'Artillery Load Test'
+      Accept: 'application/json'
+      Content-Type: 'application/json'
+
+  # Performance thresholds
+  ensure:
+    p95: 2000 # 95th percentile response time should be under 2 seconds
+    p99: 5000 # 99th percentile response time should be under 5 seconds
+    max: 10000 # Maximum response time should be under 10 seconds
+
+# ============================================================================
+# TEST SCENARIOS
+# ============================================================================
+
+scenarios:
+  # Home page load test
+  - name: 'Home page load'
+    weight: 30
+    flow:
+      - get:
+          url: '/'
+          expect:
+            - statusCode: 200
+            - hasHeader: 'content-type'
+            - contentType: 'text/html'
+      - think: 2 # Wait 2 seconds between requests
+
+  # Dashboard page load test
+  - name: 'Dashboard page load'
+    weight: 25
+    flow:
+      - get:
+          url: '/dashboard'
+          expect:
+            - statusCode: 200
+            - hasHeader: 'content-type'
+            - contentType: 'text/html'
+      - think: 3
+
+  # Profile page load test
+  - name: 'Profile page load'
+    weight: 20
+    flow:
+      - get:
+          url: '/profile'
+          expect:
+            - statusCode: 200
+            - hasHeader: 'content-type'
+            - contentType: 'text/html'
+      - think: 2
+
+  # API endpoint test
+  - name: 'API endpoint test'
+    weight: 15
+    flow:
+      - get:
+          url: '/api/health'
+          expect:
+            - statusCode: 200
+            - hasHeader: 'content-type'
+            - contentType: 'application/json'
+      - think: 1
+
+  # Static asset test
+  - name: 'Static asset test'
+    weight: 10
+    flow:
+      - get:
+          url: '/favicon.ico'
+          expect:
+            - statusCode: 200
+            - hasHeader: 'content-type'
+      - think: 1
+# ============================================================================
+# CUSTOM METRICS
+# ============================================================================
+
+# Custom metrics can be added here for specific business requirements
+# Example: Track specific API response times or error rates

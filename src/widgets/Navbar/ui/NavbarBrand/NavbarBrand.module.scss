@@ -1,0 +1,44 @@
+// NavbarBrand SCSS Module - NO Tailwind
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: brand-fade-in var(--brand-fade-duration, 0.3s) ease-out forwards;
+}
+
+.navbar__logo {
+  // width: var(--logo-height, 25px);
+  height: var(--logo-height, 25px);
+  display: block;
+  > path {
+    fill: var(--color-white);
+  }
+}
+
+.navbar__brandText {
+  font-size: var(--logo-height) !important;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.1px;
+}
+
+@keyframes brand-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar__logo {
+    height: calc(var(--logo-height, 20px) * 1.2);
+  }
+  .navbar__brandText {
+    font-size: calc(var(--logo-height, 20px) * 1.2);
+  }
+}

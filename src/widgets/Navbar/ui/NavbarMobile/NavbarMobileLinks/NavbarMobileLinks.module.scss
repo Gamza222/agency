@@ -1,0 +1,323 @@
+// NavbarMobileLinks SCSS Module - NO Tailwind
+
+.navbarMobileLinks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--green-color); // dark gold
+  z-index: 9999; // Below navbar (10000) but above everything else
+  padding-top: calc(
+    var(--logo-height, 20px) * 1.2 + var(--padding-mobile-top, 7px) * 2 + 10px
+  );
+  padding-bottom: 20px;
+  padding-left: var(--padding-mobile-side, 7px);
+  padding-right: var(--padding-mobile-side, 7px);
+  overflow-y: auto;
+
+  // Animation: slide from top with cubic-bezier (slow start, fast end)
+  animation: slideDown 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top;
+}
+
+.navbarMobileLinks_closing {
+  // Override opening animation with closing animation
+  animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.navbarMobileLinks__nav {
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0;
+  gap: 4px;
+}
+
+.navbarMobileLinks__linkWrapper {
+  display: flex;
+  align-items: center;
+  text-decoration: none !important;
+  position: relative;
+  transition: color 0.3s ease;
+
+  // Remove all text-decoration effects from Link component
+  &:hover,
+  &:focus,
+  &:active,
+  &:visited {
+    text-decoration: none !important;
+  }
+
+  // Remove text-decoration from all child elements
+  * {
+    text-decoration: none !important;
+  }
+}
+
+.navbarMobileLinks__linkIndicator {
+  width: 0; // Inactive: no space taken
+  height: calc(var(--font-size-5xl) - 10px); // Text size minus 5px
+  border-radius: 50%;
+  background-color: var(--color-white);
+  opacity: 0;
+  transform: scale(0);
+  transition:
+    width 0.3s ease,
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    background-color 0.3s ease; // Smooth color transition
+  flex-shrink: 0;
+}
+
+// During loading, active link indicator should be white (already white, but ensure it stays white)
+body[data-is-loading="true"]
+  .navbarMobileLinks__linkWrapper_active
+  .navbarMobileLinks__linkIndicator {
+  background-color: var(--color-white);
+}
+
+.navbarMobileLinks__linkWrapper_active {
+  color: var(--color-black);
+  transition: color 0.3s ease;
+}
+
+// During loading, active link should be white
+body[data-is-loading="true"] .navbarMobileLinks__linkWrapper_active {
+  color: var(--color-white);
+}
+
+.navbarMobileLinks__linkWrapper_active .navbarMobileLinks__linkIndicator {
+  opacity: 1;
+  width: calc(var(--font-size-5xl) - 10px); // Active: text size minus 5px
+  transform: scale(1);
+  margin-right: 7px;
+}
+
+.navbarMobileLinks__link {
+  padding: 0; // No padding - line-height handles spacing
+  line-height: 1em; // Equal to font size
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 2px;
+  display: block;
+  transition: color 0.3s ease;
+  text-decoration: none !important; // Remove text-decoration
+  // Text element - separate animations for active/hover (won't conflict)
+  opacity: 1; // Always visible (no loading animation needed for mobile)
+
+  // Remove all text-decoration effects
+  &:hover,
+  &:focus,
+  &:active,
+  &:visited {
+    text-decoration: none !important;
+  }
+}
+
+// Active link flicker - runs on text element (2 flicks when link becomes active)
+.navbarMobileLinks__linkWrapper_active .navbarMobileLinks__link {
+  animation: active-link-flicker-mobile 0.5s ease forwards;
+}
+
+// Hover flicker - runs on text element (1 flick with longer opacity 0, only on hover-capable devices)
+@media (hover: hover) {
+  .navbarMobileLinks__linkWrapper:hover:not(
+      .navbarMobileLinks__linkWrapper_active
+    )
+    .navbarMobileLinks__link {
+    animation: hover-link-flicker-mobile 0.2s ease forwards;
+  }
+}
+
+// Active link flicker - 2 flicks (same as desktop)
+@keyframes active-link-flicker-mobile {
+  0% {
+    opacity: 1;
+  }
+  12.5% {
+    opacity: 0; // First flick - fast transition to 0
+  }
+  25% {
+    opacity: 1; // First flick - fast transition back
+  }
+  37.5% {
+    opacity: 0; // Second flick - fast transition to 0
+  }
+  50% {
+    opacity: 1; // Second flick - fast transition back
+  }
+  100% {
+    opacity: 1; // Stay visible
+  }
+}
+
+// Hover flicker - 1 flick with longer opacity 0 duration (same as desktop)
+@keyframes hover-link-flicker-mobile {
+  0% {
+    opacity: 1;
+  }
+  10% {
+    opacity: 0; // Fast transition to 0
+  }
+  60% {
+    opacity: 0; // Stay at 0 longer
+  }
+  100% {
+    opacity: 1; // Fast transition back
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+.navbarMobileLinks__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.navbarMobileLinks__bottomText {
+  text-transform: uppercase;
+}
+
+.navbarMobileLinks__bottomLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; // Text on left, arrow on right (edges)
+  font-weight: 600;
+  text-decoration: none !important;
+  padding-bottom: 2px; // Space for underline (1-2px below)
+  width: 100%;
+
+  // Underline - whole link
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--color-black);
+    transform-origin: right;
+    transition: transform 0.4s ease;
+  }
+
+  // Arrow clone - on the left, hidden by default, appears on hover
+  .navbarMobileLinks__bottomLinkArrowClone {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transform: translateX(-50px); // Start off-screen left
+    // On hover in: delay 0.4s (after original arrow flickers)
+    // On hover out: no delay (immediate, synchronized with text)
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
+
+    svg {
+      width: var(--font-size-3xl);
+      height: var(--font-size-3xl);
+      color: var(--color-black);
+    }
+  }
+
+  // Text - smoothly moves to give space for arrow clone
+  .navbarMobileLinks__bottomLinkText {
+    transition: transform 0.4s ease;
+    transform: translateX(0);
+  }
+
+  // Original arrow - on the right, flicks and disappears
+  .navbarMobileLinks__bottomLinkArrow {
+    display: flex;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.4s ease; // Smooth fade out on hover out
+
+    svg {
+      width: var(--font-size-3xl);
+      height: var(--font-size-3xl);
+      color: var(--color-black);
+    }
+  }
+
+  // Hover effects
+  @media (hover: hover) {
+    &:hover {
+      // Underline disappears from right to left
+      &::after {
+        transform: scaleX(0);
+        transform-origin: right;
+      }
+
+      // Text smoothly moves to the right to give space for arrow clone
+      .navbarMobileLinks__bottomLinkText {
+        transform: translateX(
+          calc(var(--font-size-3xl) + 8px)
+        ); // Arrow width + gap
+      }
+
+      // Original arrow flicks 2 times and disappears
+      .navbarMobileLinks__bottomLinkArrow {
+        animation: arrow-flicker-disappear 0.4s ease forwards;
+      }
+
+      // Arrow clone appears and moves into position (faster transition)
+      .navbarMobileLinks__bottomLinkArrowClone {
+        opacity: 1;
+        transform: translateX(0); // Moves to start position
+        transition:
+          opacity 0.3s ease 0.4s,
+          transform 0.3s ease 0.4s; // Faster transition, starts after original arrow flickers
+      }
+    }
+  }
+}
+
+// Original arrow - flicks 2 times then disappears
+@keyframes arrow-flicker-disappear {
+  0% {
+    opacity: 1;
+  }
+  12.5% {
+    opacity: 0; // First flick - fast transition to 0
+  }
+  25% {
+    opacity: 1; // First flick - fast transition back
+  }
+  37.5% {
+    opacity: 0; // Second flick - fast transition to 0
+  }
+  50% {
+    opacity: 1; // Second flick - fast transition back
+  }
+  100% {
+    opacity: 0; // Disappears after flickers
+  }
+}

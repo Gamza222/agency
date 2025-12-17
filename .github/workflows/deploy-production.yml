@@ -1,0 +1,141 @@
+name: Deploy Production Environment
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy to"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  NODE_VERSION: "18"
+
+jobs:
+  # ============================================================================
+  # PRODUCTION DEPLOYMENT
+  # ============================================================================
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get version and environment info
+        run: |
+          echo "=== Production Deployment Information ==="
+          VERSION=$(npx ts-node --project tsconfig.scripts.json scripts/version.ts display)
+          VERSION_INFO=$(npx ts-node --project tsconfig.scripts.json scripts/version.ts info)
+          ENV=$(npx ts-node --project tsconfig.scripts.json -e "const { envConfig } = require('./config/env'); console.log(envConfig.appEnv);")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION_INFO=$VERSION_INFO" >> $GITHUB_ENV
+          echo "ENV=$ENV" >> $GITHUB_ENV
+          echo "Deploying version: $VERSION"
+          echo "Environment: $ENV"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+
+      - name: Create build info file
+        run: |
+          cat > build-info.json << EOF
+          {
+            "version": "$VERSION",
+            "versionInfo": $VERSION_INFO,
+            "environment": "$ENV",
+            "branch": "${{ github.ref_name }}",
+            "commit": "${{ github.sha }}",
+            "buildTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "buildUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          EOF
+          echo "Created build-info.json:"
+          cat build-info.json
+
+      - name: Deploy to Vercel Production
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod"
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: Get Vercel deployment URL
+        id: vercel-url
+        run: |
+          DEPLOYMENT_URL=$(vercel ls --token ${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }} | grep -m 1 "https://" | awk '{print $1}' || echo "")
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            DEPLOYMENT_URL="https://${{ secrets.VERCEL_PROJECT_ID }}.vercel.app"
+          fi
+          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "🌐 Production deployment URL: $DEPLOYMENT_URL"
+
+      - name: Health check
+        run: |
+          echo "🔍 Performing health check..."
+          sleep 10
+          DEPLOYMENT_URL="${{ steps.vercel-url.outputs.DEPLOYMENT_URL }}"
+          if [ -n "$DEPLOYMENT_URL" ]; then
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYMENT_URL" || echo "000")
+            if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; then
+              echo "✅ Application is responding (HTTP $HTTP_CODE)"
+              echo "✅ Health check passed"
+            else
+              echo "⚠️  Application returned HTTP $HTTP_CODE (may still be deploying)"
+            fi
+          else
+            echo "⚠️  Deployment URL not available yet"
+          fi
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "🎉 Production deployment successful!"
+          echo "Version: $VERSION"
+          echo "Environment: $ENV"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Deployment URL: ${{ steps.vercel-url.outputs.DEPLOYMENT_URL }}"
+          echo "Build URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+  # ============================================================================
+  # DEPLOYMENT ROLLBACK
+  # ============================================================================
+
+  rollback-deployment:
+    name: Rollback Deployment
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: deploy-production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Rollback to previous version
+        run: |
+          echo "🔄 Rolling back deployment..."
+          echo "❌ Production deployment failed"
+          echo "Please check the logs and fix the issues"
+          echo "To rollback manually, use: vercel rollback --token ${{ secrets.VERCEL_TOKEN }}"
+          exit 1

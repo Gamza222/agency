@@ -1,0 +1,53 @@
+.videoBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9997; // Behind all content including navbar
+  pointer-events: none;
+  overflow: hidden;
+  // Removed isolation: isolate to allow mix-blend-mode from LoadingScreen overlay to work
+}
+
+.videoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  // Hardware acceleration optimizations
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  // Initial state for entrance animation
+  transform-origin: center center;
+
+  // Initial position: off-screen at bottom, rotated, invisible
+  // These values match START_* constants in constants.ts
+  transform: translate3d(-10%, 120%, 0) rotate(5deg) scale(1);
+  opacity: 0;
+
+  // Entrance animation - handled entirely in CSS
+  // Uses CSS custom property for duration, cubic-bezier easing for fast start, slow end
+  // Animation starts only when image is loaded AND shouldStart is true (controlled by class)
+  &.videoImage_loaded {
+    animation: slideInRotate var(--animation-duration)
+      cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    // No delay - starts immediately when shouldStart becomes true
+  }
+}
+
+@keyframes slideInRotate {
+  0% {
+    // Start position: off-screen at bottom, rotated, invisible
+    // Values match START_* constants in constants.ts
+    transform: translate3d(-10%, 120%, 0) rotate(5deg) scale(1);
+    opacity: 0;
+  }
+
+  100% {
+    // End position: centered, no rotation, fully visible
+    // Values match END_* constants in constants.ts
+    transform: translate3d(0%, 0%, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}

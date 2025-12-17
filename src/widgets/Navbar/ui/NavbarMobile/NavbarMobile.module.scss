@@ -1,0 +1,299 @@
+// NavbarMobile SCSS Module - NO Tailwind
+
+.navbarMobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--navbar-z-index, 10000);
+  background-color: transparent;
+  padding: var(--padding-mobile-top) var(--padding-mobile-side);
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  // Use will-change to optimize rendering performance
+  will-change: background-color;
+  // Faster transition to match slide animation timing
+  transition: background-color 0s ease-out;
+}
+
+.navbarMobile_open {
+  background-color: transparent;
+  // Ensure smooth transition without flicker
+  transition: background-color 0.2s ease-in;
+}
+
+.navbar__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// Hamburger - flickers on initial load
+.navbar__hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  animation: hamburger-flicker var(--hamburger-flicker-duration, 0.17s) 2
+    forwards;
+  animation-delay: var(--hamburger-delay, 0.2s);
+
+  // Remove all default browser effects
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  // Remove default button styles
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.navbar__hamburgerLine {
+  width: 50px;
+  height: 4px;
+  background-color: var(--color-white);
+  position: relative;
+
+  // Each line flickers 3 times when clicked (cascading)
+  --flicker-duration: 0.08s; // Very fast
+}
+
+// When hamburger opens - complex flicker sequence
+.navbar__hamburger_open {
+  .navbar__hamburgerLine:nth-child(1) {
+    animation: line-1 0.7s linear forwards;
+  }
+
+  .navbar__hamburgerLine:nth-child(2) {
+    animation: line-2 0.7s linear forwards;
+  }
+}
+
+// When hamburger closes - reverse of opening flow
+.navbar__hamburger:not(.navbar__hamburger_open) {
+  .navbar__hamburgerLine:nth-child(1) {
+    animation: close-line-1 0.7s linear forwards;
+  }
+
+  .navbar__hamburgerLine:nth-child(2) {
+    animation: close-line-2 0.7s linear forwards;
+  }
+}
+
+@keyframes hamburger-flicker {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes line-1 {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  8% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  16% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  24% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  32% {
+    opacity: 0;
+    transform: translateY(5px) rotate(25deg);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(5px) rotate(25deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(5px) rotate(25deg);
+  }
+  60% {
+    opacity: 0;
+    transform: translateY(5px) rotate(25deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(5px) rotate(25deg);
+  }
+  80% {
+    opacity: 0;
+    transform: translateY(5px) rotate(25deg);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(5px) rotate(25deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(5px) rotate(25deg);
+  }
+}
+@keyframes line-2 {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  8% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  16% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  24% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  32% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  40% {
+    opacity: 0;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  70% {
+    opacity: 0;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+}
+
+// Closing animations - reverse of opening flow
+@keyframes close-line-2 {
+  // Start: crossed position
+  0% {
+    opacity: 1;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  // Reverse flickers
+  10% {
+    opacity: 0;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  30% {
+    opacity: 0;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  50% {
+    opacity: 0;
+    transform: translateY(-5px) rotate(-25deg);
+  }
+  // Transform removed during opacity 0
+  60% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  // Appear without transform
+  70% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  80% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+
+  // Final: normal position
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes close-line-1 {
+  // Start: crossed position
+  0% {
+    opacity: 1;
+    transform: translateY(5px) rotate(25deg);
+  }
+  // Reverse flickers
+  10% {
+    opacity: 1;
+    transform: translateY(5px) rotate(25deg);
+  }
+  20% {
+    opacity: 0;
+    transform: translateY(5px) rotate(25deg);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(5px) rotate(25deg);
+  }
+  40% {
+    opacity: 0;
+    transform: translateY(5px) rotate(25deg);
+  }
+  // Transform removed during opacity 0
+  50% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  // Appear without transform
+  70% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+
+  // Final: normal position
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}

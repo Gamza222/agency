@@ -1,0 +1,324 @@
+// LoadingScreen SCSS Module - NO Tailwind
+
+// Base styles shared by both modes
+.loadingScreen {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-top: calc(
+    var(--logo-height, 25px) + (var(--padding-desktop-top, 5px) * 2) + 10px
+  );
+  padding-bottom: 17px;
+  padding-left: var(--padding-desktop-side);
+  padding-right: var(--padding-desktop-side);
+  z-index: 9998;
+  // No background - VideoBackground shows through
+  background: transparent;
+  // Transform origin for scroll animation - right-top corner
+  transform-origin: right top;
+  // DEFAULT mode: position fixed
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  // Slide-out transform values - CSS handles calculations, JS only sets --scroll-progress
+  // Desktop values
+  --slide-translate-x: -30; // percentage
+  --slide-translate-y: -120; // percentage
+  --slide-rotation: -8; // degrees
+}
+
+// HOMEPAGE mode: position relative from the start
+// Includes all styles that were in the old _relative class
+.loadingScreen_homepage {
+  position: relative;
+  top: calc(
+    var(--logo-height, 25px) * -1 - var(--padding-desktop-top, 5px) * 2 - 10px
+  );
+  left: 0;
+
+  transform-origin: right top;
+}
+
+// Scroll-animated state - transform is now calculated in JavaScript for browser compatibility
+// Transform is applied via inline style.transform directly (no CSS calc()) to avoid Safari performance issues
+// Transform managed by JavaScript - see HomePage.tsx scroll handler
+// This class is kept for CSS selector context but transform is managed in JS
+.loadingScreen_scrollAnimated {
+  // Transform applied via JavaScript in HomePage.tsx - bypasses CSS calc() for Safari performance
+  // Dummy property to satisfy linter (transform is managed by JS)
+  contain: layout style paint;
+}
+
+// Exit animation for DEFAULT mode (auto slideOutRotate)
+.loadingScreen_exitAnimation {
+  animation: slideOutRotate 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@media (max-width: 768px) {
+  .loadingScreen {
+    height: 100vh;
+    padding-top: calc(
+      var(--logo-height, 25px) * 1.2 + var(--padding-mobile-top, 4px) * 2 + 10px
+    );
+    padding-left: var(--padding-mobile-side);
+    padding-right: var(--padding-mobile-side);
+
+    // Mobile: stronger effect for smaller screens
+    --slide-translate-x: -100;
+    --slide-translate-y: -150;
+    --slide-rotation: -15;
+  }
+}
+
+.loadingScreen__brandWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 2vw; // 5px equivalent at ~1920px, scales with viewport
+  transform-origin: center center;
+}
+
+.loadingScreen__percentage {
+  color: var(--color-white);
+  font-size: 1.5em;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  display: flex;
+  margin-right: auto;
+}
+
+.loadingScreen__percentageSpan {
+  margin-left: clamp(0.26vw, 1vw, 10vw) !important;
+  margin-right: clamp(0.26vw, 1vw, 1vw) !important;
+  transform: translateY(-1vw);
+  opacity: 0;
+}
+
+.loadingScreen__percentageProgress,
+.loadingScreen__percentageGoal,
+.loadingScreen__percentageSpan {
+  opacity: 0;
+}
+
+.loadingScreen__percentageStart {
+  .loadingScreen__percentageProgress {
+    animation: percentageFlicker var(--flicker-duration) 2 ease forwards;
+  }
+  .loadingScreen__percentageSpan {
+    animation: percentageFlicker var(--flicker-duration) 2 ease forwards;
+    animation-delay: var(--flicker-duration);
+  }
+  .loadingScreen__percentageGoal {
+    animation: percentageFlicker var(--flicker-duration) 2 ease forwards;
+    animation-delay: calc(var(--flicker-duration) * 2);
+  }
+}
+
+.loadingScreen__percentageHidden {
+  animation: percentageHide 260ms linear 1 forwards; /* linear works fine here */
+  animation-delay: 400ms;
+}
+
+@keyframes percentageHide {
+  0% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  49% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  74% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes percentageFlicker {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loadingScreen__logoContainer {
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.loadingScreen__loadingBar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%) scaleX(0) scaleY(0.3); /* Initial scale state */
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-white);
+  animation: none;
+  z-index: 1;
+  transform-origin: left;
+
+  pointer-events: none;
+}
+
+.loadingScreen__loadingBarStart {
+  animation: loadingBarReveal var(--animation-duration, 2000ms) ease-out
+    forwards;
+}
+
+.loadingScreen__loadingBarHidden {
+  opacity: 0 !important;
+}
+
+// SVG stroke overlay - thick border that shrinks to reveal logo
+
+.loadingScreen__logoStroke {
+  width: 100%;
+  opacity: 1;
+  display: flex;
+  // Isolate from parent's will-change: transform optimization
+  // This ensures SVG re-rasterizes on viewport changes independently
+  isolation: isolate;
+  // Force independent compositing layer that re-rasterizes on resize
+  transform: translate3d(0, 0, 0);
+  // Isolate painting to prevent being part of parent's optimized layer
+  contain: paint;
+}
+
+.loadingScreen__logoStroke svg {
+  width: 100%;
+  height: auto;
+  // Prevent blurry rasterization on GPU compositing/resize
+  shape-rendering: geometricPrecision;
+  // Force crisp rendering - independent layer
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  // Ensure SVG is always re-rasterized at full quality on viewport changes
+  // This overrides parent's will-change: transform optimization
+  will-change: auto;
+
+  path,
+  g path,
+  g polygon {
+    fill: var(--color-white); // Fill with white (thick border effect)
+    stroke: var(--color-white);
+    stroke-width: 80; // Very thick stroke
+
+    // stroke-linejoin: round;
+    // stroke-linecap: round;
+    // paint-order: stroke fill; // Stroke on top
+  }
+}
+
+.loadingScreen__logoStrokeHidden {
+  opacity: 0;
+}
+
+.loadingScreen__logoStrokeAnimate svg {
+  path,
+  g path,
+  g polygon {
+    animation: strokeShrink var(--stroke-duration) ease forwards;
+    animation-delay: var(--stroke-delay);
+  }
+}
+
+// Remove animation after loading completes but keep final state (forwards)
+.loadingScreen__logoStrokeAnimateComplete svg {
+  path,
+  g path,
+  g polygon {
+    animation: none;
+    // Keep final state from strokeShrink animation (stroke-width: 0)
+    stroke-width: 0;
+  }
+}
+
+.loadingScreen__brandText {
+  font-size: 15.78vw !important;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+
+  @media screen and (max-width: 1000px) {
+    font-size: 15.28vw !important;
+  }
+}
+
+// Loading bar animation:
+// Phase 1 (0-50%): Bar appears from left, width grows from 0 to 100%, height stays at 50% (centered)
+// Phase 2 (50-100%): Height grows from 50% to 100% (expands top and bottom from center)
+@keyframes loadingBarReveal {
+  0% {
+    transform: translateY(-50%) scaleX(0) scaleY(0.3);
+    opacity: 1;
+  }
+  86% {
+    transform: translateY(-50%) scaleX(1) scaleY(0.3);
+    opacity: 1;
+  }
+  93% {
+    transform: translateY(-50%) scaleX(1) scaleY(0.3);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50%) scaleX(1) scaleY(1);
+    opacity: 1;
+  }
+}
+
+// Stroke shrink animation - thick border shrinks to 0
+@keyframes strokeShrink {
+  0% {
+    stroke-width: 80; // Very thick stroke
+    opacity: 1;
+  }
+  100% {
+    stroke-width: 0; // No stroke - reveals the filled logo
+    opacity: 1;
+  }
+}
+
+// SlideOutRotate animation for DEFAULT mode
+// Slides UP and LEFT, right-top corner rotates toward left-top corner (counter-clockwise)
+// NO opacity change - naturally exits viewport
+@keyframes slideOutRotate {
+  0% {
+    // Start position: normal, visible
+    transform: translate3d(0%, 0%, 0) rotate(0deg);
+  }
+  100% {
+    // End position: off-screen at top-left, rotated counter-clockwise
+    // Right-top corner moves toward left-top corner
+    transform: translate3d(-30%, -120%, 0) rotate(-8deg);
+  }
+}

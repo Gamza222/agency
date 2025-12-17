@@ -1,0 +1,69 @@
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9997; // Behind all content including navbar
+  pointer-events: none;
+  isolation: isolate;
+
+  overflow: hidden;
+  //   isolation: isolate;
+
+  // CSS custom property for animation duration
+  // Can be accessed from other components via: getComputedStyle(element).getPropertyValue('--animation-duration')
+  // Default: 2s, will be overridden by inline style from component
+  --animation-duration: 2s;
+}
+
+.backgroundOverlay {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: red;
+  mix-blend-mode: multiply;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  // Hardware acceleration optimizations
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  // Initial state for entrance animation
+  transform-origin: center center;
+
+  // Initial position: off-screen at bottom, rotated, invisible
+  // These values match START_* constants in constants.ts
+  // translateX: 0% (center horizontally)
+  // translateY: 10% (slightly down)
+  // rotate: 28deg
+  // scale: 1.15
+  // opacity: 0 (invisible)
+  transform: translate3d(-10%, 120%, 0) rotate(5deg) scale(1);
+  //   opacity: 0;
+
+  // Entrance animation - handled entirely in CSS
+  // Uses CSS custom property for duration, cubic-bezier easing for fast start, slow end
+  animation: slideInRotate var(--animation-duration)
+    cubic-bezier(0.19, 1, 0.22, 1) 1s forwards;
+}
+
+@keyframes slideInRotate {
+  0% {
+    // Start position: off-screen at bottom, rotated, invisible
+    // Values match START_* constants in constants.ts
+    transform: translate3d(-10%, 120%, 0) rotate(5deg) scale(1);
+  }
+
+  100% {
+    // End position: centered, no rotation, fully visible
+    // Values match END_* constants in constants.ts
+    transform: translate3d(0%, 0%, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}

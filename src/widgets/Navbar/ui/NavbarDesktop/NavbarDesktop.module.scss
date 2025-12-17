@@ -1,0 +1,232 @@
+// NavbarDesktop SCSS Module - NO Tailwind
+
+.navbarDesktop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--navbar-z-index, 10000);
+  padding: var(--padding-desktop-top) var(--padding-desktop-side);
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+.navbar__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.navbar__nav {
+  display: inline-flex; // Only takes space of content, not full width
+  align-items: center;
+  gap: 0; // No gap - links are very close
+  transition: all 0.3s ease; // Smooth position adjustments
+  line-height: 1; // Prevent extra height from line-height
+  vertical-align: middle; // Align with brand
+}
+
+// Dividers - load one by one (start after brand loads)
+.navbar__divider {
+  opacity: 0;
+  animation: divider-fade-in var(--divider-fade-duration, 0.2s) ease-out
+    forwards;
+  animation-delay: calc(
+    var(--brand-fade-duration, 0.3s) + var(--divider-delay, 0.1s) *
+      var(--divider-index)
+  );
+  color: var(--color-white);
+  font-size: calc(var(--font-size-lg) - 3px);
+  transform: translateY(-2px);
+  padding: 0;
+  margin: 0 calc(var(--font-size-lg) * 0.3); // 2-3px gap between divider and link
+  transition: margin 0.3s ease; // Smooth adjustment when circle moves
+}
+
+@keyframes divider-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+// Nav Links - cascading flicker effect
+// Each link has exactly 2 flicks: Flick 1 (0→1), Flick 2 (0→1)
+// Next link starts when previous is 50-70% through transition from flick 1 to flick 2 (1→0)
+.navbar__link {
+  position: relative;
+  display: inline-flex; // Only takes space of content
+  align-items: center;
+  gap: 0; // No gap - circle and text are close
+  opacity: 0; // Start hidden for loading animation
+  text-decoration: none !important;
+  font-size: calc(var(--font-size-lg) - 3px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 0; // No horizontal padding - links are close
+  line-height: 1; // Prevent extra height from inherited line-height
+  height: fit-content; // Only as tall as content
+  margin: 0; // Remove any default margins
+  transition:
+    color 0.3s ease,
+    all 0.3s ease; // Smooth color and position transitions
+
+  --flicker-duration: var(--link-flicker-duration, 0.25s);
+  --dividers-count: var(--dividers-total-count, 3);
+  --divider-delay: var(--divider-delay-step, 0.08s);
+  --divider-animation: var(--divider-fade-duration, 0.15s);
+  // Last divider finishes at: brand-duration + (dividers-count * divider-delay) + divider-animation
+  --dividers-total: calc(
+    var(--brand-fade-duration, 0.2s) + var(--divider-delay-step, 0.08s) *
+      var(--dividers-total-count, 3) + var(--divider-fade-duration, 0.15s)
+  );
+  // Each link starts when previous is 60% through transition from flick 1 to flick 2
+  // Transition happens at 25% of total animation, 60% of transition = 25% + (60% of 25%) = 40% of total
+  // In time: 0.4 * (flicker-duration * 2) = 0.8 * flicker-duration
+  --link-delay: calc(
+    var(--dividers-total) + var(--link-flicker-duration, 0.25s) * 0.8 *
+      var(--link-index)
+  );
+
+  // Loading animation - runs once on mount, controls link opacity
+  animation: link-flicker-loading calc(var(--flicker-duration) * 2) forwards;
+  animation-delay: var(--link-delay);
+}
+
+// Text element - separate animations for active/hover (won't conflict with loading)
+.navbar__linkText {
+  // No initial animation - inherits opacity from parent link
+  opacity: inherit;
+  line-height: 1; // Ensure no extra height from line-height
+  margin: 0; // Remove any default margins
+  padding: 0; // Remove any default padding
+}
+
+// Loading animation - runs on link element (controls entire link visibility)
+@keyframes link-flicker-loading {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1; // End of Flick 1
+  }
+  50% {
+    opacity: 0; // End of transition, start of Flick 2
+  }
+  75% {
+    opacity: 1; // End of Flick 2
+  }
+  100% {
+    opacity: 1; // Stay visible
+  }
+}
+
+.navbar__linkIndicator {
+  width: 0; // Inactive: no space taken
+  height: calc(var(--font-size-lg) - 4px);
+  border-radius: 50%;
+  background-color: var(--green-color, #5eeb5b);
+  background-color: red;
+
+  opacity: 0;
+  flex-shrink: 0; // Prevent shrinking
+  transition:
+    width 0.3s ease,
+    opacity 0.3s ease,
+    margin 0.3s ease,
+    background-color 0.3s ease; // Smooth width, position, and color transitions
+  margin: 0; // Remove all margins
+  padding: 0; // Remove all padding
+  line-height: 1; // Prevent extra height
+}
+
+// During loading, active link indicator should be white
+body[data-is-loading="true"] .navbar__link_active .navbar__linkIndicator {
+  background-color: var(--color-white);
+}
+
+.navbar__link_active .navbar__linkIndicator,
+.navbar__link_active .navbar__linkText {
+  color: var(--green-color, #5eeb5b);
+  color: red;
+  transition: color 0.3s ease;
+}
+
+// During loading, active link should be white
+body[data-is-loading="true"] .navbar__link_active .navbar__linkIndicator,
+body[data-is-loading="true"] .navbar__link_active .navbar__linkText {
+  color: var(--color-white);
+}
+
+.navbar__link_active {
+  line-height: 1; // Prevent extra height on active link
+  height: fit-content; // Only as tall as content
+  display: inline-flex; // Only takes space of content
+  margin: 0; // Remove any default margins
+}
+
+.navbar__link_active .navbar__linkIndicator {
+  opacity: 1;
+  width: calc(var(--font-size-lg) - 4px); // Active: takes space (8px)
+  margin-right: 6px; // 2-3px gap between circle and text
+}
+
+// Active link flicker - runs on text element (2 flicks when link becomes active)
+.navbar__link_active .navbar__linkText {
+  animation: active-link-flicker 0.5s ease forwards;
+}
+
+// Hover flicker - runs on text element (1 flick with longer opacity 0, only on hover-capable devices)
+@media (hover: hover) {
+  .navbar__link:hover:not(.navbar__link_active) .navbar__linkText {
+    animation: hover-link-flicker 0.2s ease forwards;
+  }
+}
+
+// Active link flicker - 2 flicks
+@keyframes active-link-flicker {
+  0% {
+    opacity: 1;
+  }
+  12.5% {
+    opacity: 0; // First flick - fast transition to 0
+  }
+  25% {
+    opacity: 1; // First flick - fast transition back
+  }
+  37.5% {
+    opacity: 0; // Second flick - fast transition to 0
+  }
+  50% {
+    opacity: 1; // Second flick - fast transition back
+  }
+  100% {
+    opacity: 1; // Stay visible
+  }
+}
+
+// Hover flicker - 1 flick with longer opacity 0 duration
+@keyframes hover-link-flicker {
+  0% {
+    opacity: 1;
+  }
+  10% {
+    opacity: 0; // Fast transition to 0
+  }
+  60% {
+    opacity: 0; // Stay at 0 longer
+  }
+  100% {
+    opacity: 1; // Fast transition back
+  }
+}
+
+.navbar__link_active:hover {
+  color: var(--green-color, #5eeb5b);
+}

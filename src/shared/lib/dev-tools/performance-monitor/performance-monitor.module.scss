@@ -1,0 +1,164 @@
+// Performance Monitor SCSS Module - NO Tailwind
+
+.monitor {
+  position: fixed;
+  z-index: 50;
+}
+
+.monitorTopLeft {
+  top: 16px;
+  left: 16px;
+}
+
+.monitorTopRight {
+  top: 16px;
+  right: 16px;
+}
+
+.monitorBottomLeft {
+  bottom: 16px;
+  left: 16px;
+}
+
+.monitorBottomRight {
+  bottom: 16px;
+  right: 16px;
+}
+
+.toggleButton {
+  background-color: #059669;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #047857;
+  }
+}
+
+.panelContent {
+  position: absolute;
+  top: 48px;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 256px;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.panelTitle {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.closeButton {
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+
+  &:hover {
+    color: #374151;
+  }
+}
+
+.metricSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.metricLabel {
+  color: #6b7280;
+}
+
+.metricValue {
+  color: #1f2937;
+}
+
+.progressBar {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 8px;
+}
+
+.progressFill {
+  height: 8px;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+}
+
+.progressFillGood {
+  background-color: #2563eb;
+}
+
+.progressFillWarning {
+  background-color: #f59e0b;
+}
+
+.progressFillError {
+  background-color: #ef4444;
+}
+
+.vitalsSection {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+}
+
+.vitalsTitle {
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.vitalsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.vitalsRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.vitalsLabel {
+  color: #6b7280;
+}
+
+.vitalsValue {
+  color: #1f2937;
+}
+
+.vitalsValueGood {
+  color: #059669;
+}
+
+.vitalsValueError {
+  color: #dc2626;
+}

@@ -1,0 +1,115 @@
+name: Deploy Preview Environment
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened]
+
+env:
+  NODE_VERSION: "18"
+
+jobs:
+  # ============================================================================
+  # PREVIEW DEPLOYMENT
+  # ============================================================================
+
+  deploy-preview:
+    name: Deploy to Preview
+    runs-on: ubuntu-latest
+    environment: preview
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get version and environment info
+        run: |
+          echo "=== Deployment Information ==="
+          VERSION=$(npx ts-node --project tsconfig.scripts.json scripts/version.ts display)
+          VERSION_INFO=$(npx ts-node --project tsconfig.scripts.json scripts/version.ts info)
+          ENV=$(npx ts-node --project tsconfig.scripts.json -e "const { envConfig } = require('./config/env'); console.log(envConfig.appEnv);")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION_INFO=$VERSION_INFO" >> $GITHUB_ENV
+          echo "ENV=$ENV" >> $GITHUB_ENV
+          echo "Deploying version: $VERSION"
+          echo "Environment: $ENV"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+
+      - name: Create build info file
+        run: |
+          cat > build-info.json << EOF
+          {
+            "version": "$VERSION",
+            "versionInfo": $VERSION_INFO,
+            "environment": "$ENV",
+            "branch": "${{ github.ref_name }}",
+            "commit": "${{ github.sha }}",
+            "buildTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "buildUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          EOF
+          echo "Created build-info.json:"
+          cat build-info.json
+
+      - name: Deploy to Vercel Preview
+        id: vercel-deploy
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--yes"
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        if: success()
+        with:
+          script: |
+            const deploymentUrl = '${{ steps.vercel-deploy.outputs.preview-url }}' || 'Deployment in progress...';
+            const body = `## 🚀 Preview Deployment Ready
+
+            **Version:** ${{ env.VERSION }}
+            **Environment:** ${{ env.ENV }}
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.sha }}
+
+            **Status:** ✅ Preview deployment successful
+            **Preview URL:** ${deploymentUrl}
+
+            **Build Info:**
+            - Build Time: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+            - Build URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            **Next Steps:**
+            - Review the preview deployment
+            - Test the changes
+            - Merge when ready`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "✅ Preview deployment successful"
+          echo "Version: $VERSION"
+          echo "Environment: $ENV"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Preview URL: ${{ steps.vercel-deploy.outputs.preview-url }}"
+          echo "Build URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

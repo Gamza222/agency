@@ -1,0 +1,29 @@
+// ===== DESIGN SYSTEM - MAIN ENTRY POINT =====
+// Complete design system with tokens, themes, components, and utilities
+
+// ===== DESIGN TOKENS =====
+// Core design system variables and functions
+@use 'design-tokens' as tokens;
+
+// ===== THEMES =====
+// Light and dark theme implementations
+@use 'themes';
+
+// ===== BASE STYLES =====
+// CSS reset and global styles
+@use 'base';
+
+// ===== FONTS =====
+// Local font loading
+@use 'fonts/fonts';
+
+// ===== MIXINS =====
+// Reusable styling patterns
+@use 'mixins' as mixins;
+
+// ===== EXPORTS =====
+// Re-export everything for convenience
+@forward 'design-tokens';
+@forward 'themes';
+@forward 'base';
+@forward 'mixins';

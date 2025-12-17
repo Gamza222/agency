@@ -1,0 +1,23 @@
+// PageError SCSS Module - NO Tailwind
+
+.pageError {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f9fafb;
+}
+
+.pageError__content {
+  text-align: center;
+  max-width: 500px;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pageError__actions {
+  margin-top: 24px;
+}

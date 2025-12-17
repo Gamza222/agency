@@ -1,0 +1,16 @@
+@use "../design-tokens/colors" as colors;
+
+// ===== LIGHT THEME =====
+// Default light theme for the application
+
+:root,
+[data-theme="light"] {
+  // ===== BACKGROUND COLORS =====
+  --color-background: #{colors.color("surface", "background")}; // #ffffff
+}
+
+// ===== COMPONENT STATE VARIATIONS =====
+.light-theme {
+  // Additional light theme specific styles can go here
+  color-scheme: light;
+}

@@ -1,0 +1,243 @@
+@use "../design-tokens/colors" as colors;
+
+// ===== DARK THEME =====
+// Dark theme for the application with proper contrast and accessibility
+
+[data-theme="dark"] {
+  // ===== BACKGROUND COLORS =====
+  --color-background: #{colors.gray(900)}; // #111827
+  --color-background-alt: #{colors.gray(800)}; // #1f2937
+  --color-background-subtle: #{colors.gray(800)}; // #1f2937
+  --color-background-muted: #{colors.gray(700)}; // #374151
+
+  // ===== SURFACE COLORS =====
+  --color-surface: #{colors.gray(800)}; // #1f2937
+  --color-surface-alt: #{colors.gray(750)}; // Between 800-700
+  --color-surface-raised: #{colors.gray(700)}; // #374151
+  --color-surface-overlay: rgba(0, 0, 0, 0.8); // Darker overlay
+  --color-surface-modal: #{colors.gray(800)}; // #1f2937
+  --color-surface-popover: #{colors.gray(700)}; // #374151
+  --color-surface-tooltip: #{colors.gray(600)}; // #4b5563
+
+  // ===== TEXT COLORS =====
+  --color-text-primary: #{colors.gray(50)}; // #f9fafb
+  --color-text-secondary: #{colors.gray(300)}; // #d1d5db
+  --color-text-tertiary: #{colors.gray(400)}; // #9ca3af
+  --color-text-inverse: #{colors.gray(900)}; // #111827
+  --color-text-disabled: #{colors.gray(500)}; // #6b7280
+  --color-text-link: #{colors.primary(400)}; // #60a5fa
+  --color-text-link-hover: #{colors.primary(300)}; // #93c5fd
+  --color-text-on-primary: #{colors.text("inverse")}; // #ffffff
+  --color-text-on-surface: #{colors.gray(50)}; // #f9fafb
+
+  // ===== BORDER COLORS =====
+  --color-border-default: #{colors.gray(700)}; // #374151
+  --color-border-light: #{colors.gray(600)}; // #4b5563
+  --color-border-medium: #{colors.gray(600)}; // #4b5563
+  --color-border-strong: #{colors.gray(500)}; // #6b7280
+  --color-border-focus: #{colors.primary(400)}; // #60a5fa
+  --color-border-error: #{colors.color("error", 400)}; // #f87171
+  --color-border-success: #{colors.color("success", 400)}; // #4ade80
+  --color-border-warning: #{colors.color("warning", 400)}; // #fbbf24
+
+  // ===== BRAND COLORS =====
+  // Using lighter shades for better contrast on dark background
+  --color-primary-50: #{colors.primary(950)}; // Inverted
+  --color-primary-100: #{colors.primary(900)};
+  --color-primary-200: #{colors.primary(800)};
+  --color-primary-300: #{colors.primary(700)};
+  --color-primary-400: #{colors.primary(600)};
+  --color-primary-500: #{colors.primary(500)}; // Keep core
+  --color-primary-600: #{colors.primary(400)};
+  --color-primary-700: #{colors.primary(300)};
+  --color-primary-800: #{colors.primary(200)};
+  --color-primary-900: #{colors.primary(100)};
+  --color-primary-950: #{colors.primary(50)}; // Inverted
+
+  // ===== SEMANTIC COLORS =====
+  // Success - using brighter shades for dark theme
+  --color-success-50: #{colors.color("success", 950)};
+  --color-success-100: #{colors.color("success", 900)};
+  --color-success-500: #{colors.color("success", 400)}; // #4ade80
+  --color-success-600: #{colors.color("success", 300)}; // #86efac
+  --color-success-700: #{colors.color("success", 200)}; // #bbf7d0
+
+  // Error - using brighter shades for dark theme
+  --color-error-50: #{colors.color("error", 950)};
+  --color-error-100: #{colors.color("error", 900)};
+  --color-error-500: #{colors.color("error", 400)}; // #f87171
+  --color-error-600: #{colors.color("error", 300)}; // #fca5a5
+  --color-error-700: #{colors.color("error", 200)}; // #fecaca
+
+  // Warning - using brighter shades for dark theme
+  --color-warning-50: #{colors.color("warning", 950)};
+  --color-warning-100: #{colors.color("warning", 900)};
+  --color-warning-500: #{colors.color("warning", 400)}; // #fbbf24
+  --color-warning-600: #{colors.color("warning", 300)}; // #fcd34d
+  --color-warning-700: #{colors.color("warning", 200)}; // #fde68a
+
+  // Info - using brighter shades for dark theme
+  --color-info-50: #{colors.color("info", 950)};
+  --color-info-100: #{colors.color("info", 900)};
+  --color-info-500: #{colors.color("info", 400)}; // #60a5fa
+  --color-info-600: #{colors.color("info", 300)}; // #93c5fd
+  --color-info-700: #{colors.color("info", 200)}; // #bfdbfe
+
+  // ===== NEUTRAL COLORS =====
+  // Keep original grays but with semantic meaning
+  --color-gray-50: #{colors.gray(950)}; // Inverted
+  --color-gray-100: #{colors.gray(900)};
+  --color-gray-200: #{colors.gray(800)};
+  --color-gray-300: #{colors.gray(700)};
+  --color-gray-400: #{colors.gray(600)};
+  --color-gray-500: #{colors.gray(500)}; // Keep center
+  --color-gray-600: #{colors.gray(400)};
+  --color-gray-700: #{colors.gray(300)};
+  --color-gray-800: #{colors.gray(200)};
+  --color-gray-900: #{colors.gray(100)};
+  --color-gray-950: #{colors.gray(50)}; // Inverted
+
+  // ===== INTERACTIVE STATES =====
+  --color-state-hover: rgba(255, 255, 255, 0.05); // Light overlay
+  --color-state-pressed: rgba(255, 255, 255, 0.1); // Light overlay
+  --color-state-focus: rgba(96, 165, 250, 0.15); // Blue overlay
+  --color-state-selected: rgba(96, 165, 250, 0.1); // Blue overlay
+  --color-state-disabled: rgba(255, 255, 255, 0.05); // Light overlay
+
+  // ===== COMPONENT SPECIFIC =====
+  // Button colors
+  --color-button-primary-bg: var(--color-primary-600); // Brighter for dark
+  --color-button-primary-bg-hover: var(--color-primary-500);
+  --color-button-primary-bg-active: var(--color-primary-400);
+  --color-button-primary-text: var(--color-text-inverse);
+
+  --color-button-secondary-bg: transparent;
+  --color-button-secondary-bg-hover: var(--color-state-hover);
+  --color-button-secondary-bg-active: var(--color-state-pressed);
+  --color-button-secondary-text: var(--color-text-primary);
+  --color-button-secondary-border: var(--color-border-default);
+
+  --color-button-ghost-bg: transparent;
+  --color-button-ghost-bg-hover: var(--color-state-hover);
+  --color-button-ghost-bg-active: var(--color-state-pressed);
+  --color-button-ghost-text: var(--color-text-primary);
+
+  // Input colors
+  --color-input-bg: var(--color-surface);
+  --color-input-bg-disabled: var(--color-background-muted);
+  --color-input-border: var(--color-border-default);
+  --color-input-border-focus: var(--color-border-focus);
+  --color-input-border-error: var(--color-border-error);
+  --color-input-text: var(--color-text-primary);
+  --color-input-placeholder: var(--color-text-tertiary);
+
+  // Card colors
+  --color-card-bg: var(--color-surface);
+  --color-card-border: var(--color-border-default);
+
+  // Modal/Dialog colors
+  --color-modal-bg: var(--color-surface-modal);
+  --color-modal-overlay: var(--color-surface-overlay);
+
+  // Navigation colors
+  --color-nav-bg: var(--color-surface);
+  --color-nav-border: var(--color-border-default);
+  --color-nav-item-hover: var(--color-state-hover);
+  --color-nav-item-active: var(--color-state-selected);
+
+  // Form colors
+  --color-form-label: var(--color-text-secondary);
+  --color-form-helper: var(--color-text-tertiary);
+  --color-form-error: var(--color-error-400);
+  --color-form-success: var(--color-success-400);
+}
+
+// ===== COMPONENT STATE VARIATIONS =====
+.dark-theme {
+  // Additional dark theme specific styles can go here
+  color-scheme: dark;
+}
+
+// ===== DARK THEME SPECIFIC ADJUSTMENTS =====
+[data-theme="dark"] {
+  // Code blocks and syntax highlighting
+  --color-code-bg: #{colors.gray(800)};
+  --color-code-border: #{colors.gray(700)};
+  --color-code-text: #{colors.gray(200)};
+
+  // Table styles
+  --color-table-header-bg: #{colors.gray(800)};
+  --color-table-border: #{colors.gray(700)};
+  --color-table-row-hover: #{colors.gray(800)};
+
+  // Tooltip specific (using lighter background for better visibility)
+  --color-tooltip-bg: #{colors.gray(600)};
+  --color-tooltip-text: var(--color-text-primary);
+
+  // Focus ring
+  --color-focus-ring: #{colors.primary(400)};
+  --color-focus-ring-offset: var(--color-surface);
+
+  // Selection
+  --color-selection-bg: #{colors.primary(800)};
+  --color-selection-text: #{colors.primary(100)};
+
+  // Scrollbar styling for dark theme
+  scrollbar-color: #{colors.gray(600)} #{colors.gray(800)};
+
+  // Better contrast for dark theme
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #{colors.gray(800)};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #{colors.gray(600)};
+    border-radius: 4px;
+
+    &:hover {
+      background: #{colors.gray(500)};
+    }
+  }
+}
+
+// ===== DARK THEME MEDIA QUERY =====
+// Automatically apply dark theme based on system preference
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+  }
+}
+
+// ===== DARK THEME ACCESSIBILITY =====
+[data-theme="dark"] {
+  // Ensure high contrast for better accessibility
+  img {
+    opacity: 0.9;
+  }
+
+  // Improve readability of code blocks
+  pre,
+  code {
+    color: var(--color-code-text);
+    background-color: var(--color-code-bg);
+  }
+
+  // Better visibility for form elements
+  input,
+  textarea,
+  select {
+    color: var(--color-input-text);
+    background-color: var(--color-input-bg);
+    border-color: var(--color-input-border);
+
+    &::placeholder {
+      color: var(--color-input-placeholder);
+      opacity: 1;
+    }
+  }
+}

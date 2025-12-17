@@ -1,0 +1,52 @@
+.scrollSection {
+  position: relative;
+  width: 100%;
+  transform-origin: right top;
+
+  // Default entrance transform values (where section comes FROM)
+  --entrance-translate-x: -30; // percentage
+  --entrance-translate-y: 20; // percentage
+  --entrance-rotation: 8; // degrees
+
+  // Default exit transform values (where section goes TO)
+  --exit-translate-x: -30; // percentage
+  --exit-translate-y: -120; // percentage
+  --exit-rotation: -8; // degrees
+
+  // Mobile: stronger effect for smaller screens
+  @media (max-width: 768px) {
+    --entrance-translate-x: 100;
+    --entrance-translate-y: 150;
+    --entrance-rotation: 15;
+
+    --exit-translate-x: -100;
+    --exit-translate-y: -150;
+    --exit-rotation: -15;
+  }
+}
+
+// Animated state - transform driven by CSS variables from JS (like LoadingScreen)
+.scrollSection_animated {
+  // Entrance: at progress 0 → full transform, at progress 1 → no transform
+  // So we use (1 - entrance-progress)
+  // Exit: at progress 0 → no transform, at progress 1 → full transform
+  // So we use exit-progress directly
+
+  transform: translate3d(
+      calc(
+        var(--entrance-translate-x) * (1 - var(--entrance-progress, 0)) * 1% +
+          var(--exit-translate-x) * var(--exit-progress, 0) * 1%
+      ),
+      calc(
+        var(--entrance-translate-y) * (1 - var(--entrance-progress, 0)) * 1% +
+          var(--exit-translate-y) * var(--exit-progress, 0) * 1%
+      ),
+      0
+    )
+    rotate(
+      calc(
+        var(--entrance-rotation) * (1 - var(--entrance-progress, 0)) * 1deg +
+          var(--exit-rotation) * var(--exit-progress, 0) * 1deg
+      )
+    );
+}

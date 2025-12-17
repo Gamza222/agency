@@ -1,0 +1,71 @@
+{
+  "compilerOptions": {
+    // Next.js Core Requirements
+    "target": "es5", // Compile down to ES5 for browser compatibility
+    "lib": [
+      "dom", // Browser DOM APIs
+      "dom.iterable", // DOM iteration methods
+      "esnext" // Latest ECMAScript features
+    ],
+    "allowJs": true, // Allow JavaScript files to be compiled
+    "skipLibCheck": true, // Skip type checking of declaration files for better performance
+    "strict": true, // Enable all strict type checking options
+    "noImplicitAny": true, // Error on expressions with implied 'any' type
+    "strictNullChecks": true, // Enable strict null checks
+    "strictFunctionTypes": true, // Enable strict checking of function types
+    "strictBindCallApply": true, // Check 'bind', 'call', and 'apply' methods
+    "strictPropertyInitialization": true, // Ensure class properties are initialized
+    "noImplicitThis": true, // Error on 'this' expressions with implied 'any'
+    "useUnknownInCatchVariables": true, // Use 'unknown' instead of 'any' in catch
+    "alwaysStrict": true, // Parse in strict mode
+    "noUnusedLocals": true, // Error on unused local variables
+    "noUnusedParameters": true, // Error on unused parameters
+    "exactOptionalPropertyTypes": false, // Be strict about optional property types
+    "noImplicitReturns": true, // Error when not all code paths return
+    "noFallthroughCasesInSwitch": true, // Error on switch case fallthrough
+    "noUncheckedIndexedAccess": true, // Add 'undefined' to indexed access
+    "noImplicitOverride": true, // Require explicit override keyword
+    "noEmit": true, // Don't emit files (Next.js handles this)
+    "esModuleInterop": true, // Better interop between different module formats
+    "module": "esnext", // Use ES Modules
+    "moduleResolution": "node", // Use Next.js bundler for module resolution
+    "resolveJsonModule": true, // Allow importing JSON files
+    "isolatedModules": true, // Ensure each file can be safely transpiled
+    "jsx": "preserve", // Let Next.js handle JSX transformation
+    "incremental": true, // Enable incremental compilation
+
+    // Path Aliases for FSD (Feature-Sliced Design)
+    "plugins": [
+      {
+        "name": "next" // Enable Next.js TypeScript features
+      }
+    ],
+    "baseUrl": ".", // Base directory for path resolution
+    "paths": {
+      "@/*": ["./src/*"], // Root source directory
+      "@app/*": ["./src/app/*"], // Application layer (Next.js App Router)
+      "@pages/*": ["./src/pages/*"], // Pages layer (FSD page compositions)
+      "@widgets/*": ["./src/widgets/*"], // Widget layer
+      "@features/*": ["./src/features/*"], // Features layer
+      "@entities/*": ["./src/entities/*"], // Entities layer
+      "@shared/*": ["./src/shared/*"], // Shared layer
+      "@infrastructure/*": ["./src/infrastructure/*"], // Infrastructure layer
+      "@config/*": ["./config/*"], // Config directory
+      "@jestmocks/*": ["./config/jest/mocks/*"], // Jest mocks
+      "@jestproviders/*": ["./config/jest/providers/*"] // Jest providers
+    },
+    "forceConsistentCasingInFileNames": true, // Ensure consistent casing in imports
+    "sourceMap": true // Generate source maps for debugging
+  },
+  "include": [
+    "next-env.d.ts", // Next.js type definitions
+    "**/*.ts", // All TypeScript files
+    "**/*.tsx", // All TypeScript React files
+    ".next/types/**/*.ts" // Next.js generated types
+  ],
+  "exclude": [
+    "node_modules", // Exclude node_modules from compilation
+    "**/*.js", // Exclude JavaScript files from TypeScript compilation
+    "structure/**/*" // Exclude structure directory (Cypress tests, etc.)
+  ]
+}
