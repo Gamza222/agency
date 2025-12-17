@@ -25,7 +25,7 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
     onAnimationComplete,
     animationsComplete = false,
     mode = LoadingScreenMode.DEFAULT,
-    scrollProgress = 0,
+    scrollProgress: _scrollProgress = 0, // Prefixed with _ to indicate intentionally unused
   } = props;
   const [navbarMounted, setNavbarMounted] = useState(false);
   const [loadingBarComplete, setLoadingBarComplete] = useState(false);
@@ -186,10 +186,11 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
   const isHomepage = mode === LoadingScreenMode.HOMEPAGE;
   const isScrollAnimated = isHomepage && animationsComplete;
 
-  const shouldUseWillChange = useMemo(
-    () => isScrollAnimated && scrollProgress > 0 && scrollProgress < 1,
-    [isScrollAnimated, scrollProgress]
-  );
+  // TEST: Removed will-change to test if it's causing accumulating lag
+  // const shouldUseWillChange = useMemo(
+  //   () => isScrollAnimated && scrollProgress > 0 && scrollProgress < 1,
+  //   [isScrollAnimated, scrollProgress]
+  // );
 
   const containerMods: Mods = useMemo(
     () => ({
@@ -207,12 +208,15 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
     <div
       ref={containerRef}
       className={classNames(styles.loadingScreen, containerMods, [className])}
-      style={{
-        // DO NOT set --scroll-progress here - it's updated directly via DOM in HomePage
-        // Setting it here would cause React to overwrite direct DOM updates on every render
-        // CSS variable inherits from parent (pageRef in HomePage)
-        willChange: shouldUseWillChange ? "transform" : undefined,
-      }}
+      style={
+        {
+          // DO NOT set --scroll-progress here - it's updated directly via DOM in HomePage
+          // Setting it here would cause React to overwrite direct DOM updates on every render
+          // CSS variable inherits from parent (pageRef in HomePage)
+          // TEST: Removed will-change to test if it's causing accumulating lag
+          // willChange: shouldUseWillChange ? "transform" : undefined,
+        }
+      }
     >
       <div
         className={styles.loadingScreen__brandWrapper}

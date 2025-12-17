@@ -42,19 +42,7 @@ interface UseScrollChoreographyResult {
   sectionHeight: number;
 }
 
-/**
- * Safe window access helper
- */
-function getWindowValue<T>(getter: () => T, fallback: T): T {
-  if (typeof window === "undefined") {
-    return fallback;
-  }
-  try {
-    return getter();
-  } catch {
-    return fallback;
-  }
-}
+// Removed unused getWindowValue helper - similar function exists in useViewportValues.ts
 
 /**
  * Hook for calculating scroll-based animation progress

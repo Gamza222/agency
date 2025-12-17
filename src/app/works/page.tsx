@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 
 export default function WorksPage() {
   const handleLoadingComplete = useCallback(() => {}, []);
-  const [animationsComplete, setAnimationsComplete] = useState(false);
+  const [animationsComplete] = useState(false);
 
   return (
     <main>

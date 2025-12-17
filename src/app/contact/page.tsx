@@ -6,7 +6,7 @@ import { LoadingScreen, LoadingScreenMode } from "@/widgets/LoadingScreen";
 export default function ContactPage() {
   const [showContent, setShowContent] = useState(false);
 
-  const handleExitComplete = () => {
+  const handleAnimationComplete = () => {
     // Content is revealed after exit animation completes
     setShowContent(true);
   };
@@ -15,7 +15,7 @@ export default function ContactPage() {
     <main>
       {!showContent && (
         <LoadingScreen
-          onExitComplete={handleExitComplete}
+          onAnimationComplete={handleAnimationComplete}
           mode={LoadingScreenMode.DEFAULT}
         />
       )}

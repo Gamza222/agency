@@ -1,13 +1,6 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-  memo,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { LoadingScreen, LoadingScreenMode } from "@/widgets/LoadingScreen";
 import { VideoBackground } from "@/widgets/VideoBackground";
 // import { Highlights } from "@/widgets/Highlights";
@@ -160,35 +153,9 @@ export const HomePage = memo((props: HomePageProps) => {
           }
         }
 
-        // #region agent log
+        // #region agent log - THROTTLED to every 100ms to reduce overhead
         const transformUpdateTime = performance.now() - transformUpdateStart;
         const rafTime = performance.now() - rafStart;
-        const logData = {
-          location: "HomePage.tsx:RAF",
-          message:
-            "Transform update timing (no CSS calc, with change detection)",
-          data: {
-            progress,
-            transformUpdateTime: transformUpdateTime.toFixed(2),
-            rafTime: rafTime.toFixed(2),
-            isMobile,
-            transformChanged,
-            rafCallbackCount, // Track accumulation
-          },
-          timestamp: Date.now(),
-          sessionId: "debug-session-3",
-          runId: "run3",
-          hypothesisId: "H",
-        };
-        console.log("[DEBUG]", logData);
-        fetch(
-          "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(logData),
-          }
-        ).catch(() => {});
         // #endregion
 
         // Throttle React state updates to prevent excessive re-renders
@@ -196,6 +163,34 @@ export const HomePage = memo((props: HomePageProps) => {
         // This allows LoadingScreen's will-change logic to work, but with 6x fewer re-renders
         const now = performance.now();
         if (now - lastStateUpdateTime > 100) {
+          // Only log every 100ms to reduce console.log/fetch overhead
+          const logData = {
+            location: "HomePage.tsx:RAF",
+            message:
+              "Transform update timing (no CSS calc, with change detection, no will-change)",
+            data: {
+              progress,
+              transformUpdateTime: transformUpdateTime.toFixed(2),
+              rafTime: rafTime.toFixed(2),
+              isMobile,
+              transformChanged,
+              rafCallbackCount,
+            },
+            timestamp: Date.now(),
+            sessionId: "debug-session-4",
+            runId: "run4",
+            hypothesisId: "I",
+          };
+          console.log("[DEBUG]", logData);
+          fetch(
+            "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(logData),
+            }
+          ).catch(() => {});
+
           setScrollProgress(progress);
           lastStateUpdateTime = now;
         }
@@ -221,11 +216,11 @@ export const HomePage = memo((props: HomePageProps) => {
     };
   }, [animationsComplete]);
 
-  // Only use will-change while actively transforming
-  const shouldUseWillChange = useMemo(
-    () => animationsComplete && scrollProgress > 0 && scrollProgress < 1,
-    [animationsComplete, scrollProgress]
-  );
+  // TEST: Removed will-change - it might cause Safari to maintain expensive composite layers
+  // const shouldUseWillChange = useMemo(
+  //   () => animationsComplete && scrollProgress > 0 && scrollProgress < 1,
+  //   [animationsComplete, scrollProgress]
+  // );
 
   return (
     <main
@@ -240,9 +235,10 @@ export const HomePage = memo((props: HomePageProps) => {
       <div
         ref={backgroundOverlayElementRef as React.RefObject<HTMLDivElement>}
         className={styles.backgroundOverlay}
-        style={{
-          willChange: shouldUseWillChange ? "transform" : undefined,
-        }}
+        // TEST: Removed will-change
+        // style={{
+        //   willChange: shouldUseWillChange ? "transform" : undefined,
+        // }}
       />
       <LoadingScreen
         onAnimationComplete={handleLoadingComplete}

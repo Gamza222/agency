@@ -44,7 +44,7 @@
     "paths": {
       "@/*": ["./src/*"], // Root source directory
       "@app/*": ["./src/app/*"], // Application layer (Next.js App Router)
-      "@pages/*": ["./src/pages/*"], // Pages layer (FSD page compositions)
+      "@pages/*": ["./src/compositions/*"], // Pages layer (FSD page compositions - renamed to avoid Next.js Pages Router conflict)
       "@widgets/*": ["./src/widgets/*"], // Widget layer
       "@features/*": ["./src/features/*"], // Features layer
       "@entities/*": ["./src/entities/*"], // Entities layer
