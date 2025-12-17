@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { LoadingScreen, LoadingScreenMode } from "@/widgets/LoadingScreen";
 import { VideoBackground } from "@/widgets/VideoBackground";
-import { Highlights } from "@/widgets/Highlights";
+// import { Highlights } from "@/widgets/Highlights";
 import styles from "./HomePage.module.scss";
 
 interface HomePageProps {}
@@ -22,7 +22,7 @@ export const HomePage = memo((props: HomePageProps) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const pageRef = useRef<HTMLElement>(null);
   const loadingScreenElementRef = useRef<HTMLElement | null>(null);
-  const backgroundOverlayElementRef = useRef<HTMLElement | null>(null);
+  const backgroundOverlayElementRef = useRef<HTMLDivElement | null>(null);
 
   // Track which animations have completed
   const animationStatus = useRef({ background: false, loading: false });
@@ -94,13 +94,13 @@ export const HomePage = memo((props: HomePageProps) => {
   useEffect(() => {
     if (!animationsComplete) return;
 
-    // Slide-out transform values (matching CSS variables)
+    // Slide-out transform values
     // Desktop values
     const DESKTOP_TRANSLATE_X = -30; // percentage
     const DESKTOP_TRANSLATE_Y = -120; // percentage
     const DESKTOP_ROTATION = -8; // degrees
 
-    // Mobile values (breakpoint typically 768px, but check window width)
+    // Mobile values
     const MOBILE_TRANSLATE_X = -100; // percentage
     const MOBILE_TRANSLATE_Y = -150; // percentage
     const MOBILE_ROTATION = -15; // degrees
@@ -108,14 +108,18 @@ export const HomePage = memo((props: HomePageProps) => {
     let rafId: number | null = null;
     let isScheduled = false;
     let lastStateUpdateTime = 0;
+    let lastTransformString = ""; // Cache last transform to avoid unnecessary updates
+    let rafCallbackCount = 0; // Track how many RAF callbacks have executed
 
     const handleScroll = () => {
       if (isScheduled) return;
       isScheduled = true;
 
       rafId = requestAnimationFrame(() => {
+        rafCallbackCount++;
         isScheduled = false;
 
+        const rafStart = performance.now();
         const scrollTop = window.scrollY;
         const viewportHeight = window.innerHeight;
         const progress = Math.min(1, Math.max(0, scrollTop / viewportHeight));
@@ -134,16 +138,58 @@ export const HomePage = memo((props: HomePageProps) => {
 
         const transformString = `translate3d(${translateXValue}%, ${translateYValue}%, 0) rotate(${rotationValue}deg)`;
 
-        // Apply transform directly to LoadingScreen (bypasses CSS calc() entirely)
-        // Use cached ref to avoid querySelector on every frame
-        if (loadingScreenElementRef.current) {
-          loadingScreenElementRef.current.style.transform = transformString;
+        // #region agent log - measure transform update cost
+        const transformUpdateStart = performance.now();
+        const transformChanged = transformString !== lastTransformString;
+        // #endregion
+
+        // Only update if transform string actually changed (avoids unnecessary style updates in Safari)
+        if (transformChanged) {
+          lastTransformString = transformString;
+
+          // Apply transform directly to LoadingScreen (bypasses CSS calc() entirely)
+          // Use cached ref to avoid querySelector on every frame
+          if (loadingScreenElementRef.current) {
+            loadingScreenElementRef.current.style.transform = transformString;
+          }
+
+          // Apply same transform to backgroundOverlay (also bypasses CSS calc())
+          if (backgroundOverlayElementRef.current) {
+            backgroundOverlayElementRef.current.style.transform =
+              transformString;
+          }
         }
 
-        // Apply same transform to backgroundOverlay (also bypasses CSS calc())
-        if (backgroundOverlayElementRef.current) {
-          backgroundOverlayElementRef.current.style.transform = transformString;
-        }
+        // #region agent log
+        const transformUpdateTime = performance.now() - transformUpdateStart;
+        const rafTime = performance.now() - rafStart;
+        const logData = {
+          location: "HomePage.tsx:RAF",
+          message:
+            "Transform update timing (no CSS calc, with change detection)",
+          data: {
+            progress,
+            transformUpdateTime: transformUpdateTime.toFixed(2),
+            rafTime: rafTime.toFixed(2),
+            isMobile,
+            transformChanged,
+            rafCallbackCount, // Track accumulation
+          },
+          timestamp: Date.now(),
+          sessionId: "debug-session-3",
+          runId: "run3",
+          hypothesisId: "H",
+        };
+        console.log("[DEBUG]", logData);
+        fetch(
+          "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(logData),
+          }
+        ).catch(() => {});
+        // #endregion
 
         // Throttle React state updates to prevent excessive re-renders
         // Only update state every 100ms (instead of every scroll event ~16ms)
@@ -161,11 +207,17 @@ export const HomePage = memo((props: HomePageProps) => {
     handleScroll(); // Initial call
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
+      // CRITICAL: Cancel any pending RAF before cleanup
       if (rafId !== null) {
         cancelAnimationFrame(rafId);
+        rafId = null;
       }
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      // Reset state to prevent accumulation
+      isScheduled = false;
+      lastTransformString = "";
+      rafCallbackCount = 0;
     };
   }, [animationsComplete]);
 
@@ -186,23 +238,21 @@ export const HomePage = memo((props: HomePageProps) => {
         shouldStart={videoShouldStart}
       />
       <div
-        ref={backgroundOverlayElementRef}
+        ref={backgroundOverlayElementRef as React.RefObject<HTMLDivElement>}
         className={styles.backgroundOverlay}
         style={{
           willChange: shouldUseWillChange ? "transform" : undefined,
         }}
       />
-
       <LoadingScreen
         onAnimationComplete={handleLoadingComplete}
         animationsComplete={animationsComplete}
         mode={LoadingScreenMode.HOMEPAGE}
         scrollProgress={scrollProgress}
       />
-
       <div className={styles.videoSpacer} />
-
-      <Highlights />
+      <div style={{ height: "100vh" }}></div>
+      {/* <Highlights /> */}
     </main>
   );
 });

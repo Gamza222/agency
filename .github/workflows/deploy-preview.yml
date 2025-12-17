@@ -1,9 +1,8 @@
 name: Deploy Preview Environment
 
 on:
-  pull_request:
-    branches: [main, develop]
-    types: [opened, synchronize, reopened]
+  # Disabled automatic triggers - only manual runs
+  workflow_dispatch:
 
 env:
   NODE_VERSION: "18"
