@@ -1,0 +1,78 @@
+@use "base/base" as *;
+
+.highlightsPreCanvasWrapper {
+}
+
+// Wrapper - GSAP handles pinning
+.highlightsPreCanvas {
+  width: 100%;
+  z-index: 100;
+}
+
+// Transform target - all animations applied here
+.highlightsPreCanvas__content {
+  width: 100%;
+  background: var(--gray-color, #dedfe3f2);
+  display: flex;
+  flex-direction: column;
+  padding: clamp(3.5rem, 4vw, 100rem) var(--padding-desktop-side)
+    clamp(1.2rem, 1.5vw, 100rem) var(--padding-desktop-side);
+  will-change: transform;
+  min-height: 20vh;
+  justify-content: flex-end;
+
+  backface-visibility: hidden;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: clamp(1.5rem, 2vw, 100rem) var(--padding-mobile-side)
+      clamp(1.5rem, 2vw, 100rem) var(--padding-mobile-side);
+  }
+}
+
+// Title section
+.highlightsPreCanvas__titleWrapper {
+  color: var(--color-black, #14100c);
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(3rem, 8vw, 100rem);
+  width: 100%;
+  justify-content: space-between;
+  flex-shrink: 0;
+
+  @media (max-width: 490px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(1rem, 1vw, 100rem);
+  }
+}
+
+.highlightsPreCanvas__title {
+  width: 100%;
+  word-break: break-word;
+
+  @media (max-width: 400px) {
+    width: 100%;
+  }
+}
+
+.highlightsPreCanvas__link {
+  width: auto !important;
+  flex-shrink: 0;
+}
+
+.highlightsPreCanvas__Box {
+  position: absolute;
+  height: 100vh;
+  top: 100%;
+  left: 0;
+  min-height: 450px;
+  width: 100%;
+  background: var(--gray-color, #dedfe3f2);
+  padding: 0 var(--padding-desktop-side) clamp(2rem, 2vw, 100rem)
+    var(--padding-desktop-side);
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 0 var(--padding-mobile-side) clamp(2rem, 2vw, 100rem)
+      var(--padding-mobile-side);
+  }
+}

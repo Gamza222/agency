@@ -40,10 +40,10 @@
       var(--divider-index)
   );
   color: var(--color-white);
-  font-size: calc(var(--font-size-lg) - 3px);
-  transform: translateY(-2px);
+  font-size: calc(var(--font-size-base));
+  font-weight: 100;
   padding: 0;
-  margin: 0 calc(var(--font-size-lg) * 0.3); // 2-3px gap between divider and link
+  margin: 0 calc(var(--font-size-lg) * 0.4); // 2-3px gap between divider and link
   transition: margin 0.3s ease; // Smooth adjustment when circle moves
 }
 

@@ -2,7 +2,13 @@
 
 import React from "react";
 import styles from "./Text.module.scss";
-import { TextProps, TextVariant, TextAlign, TextSize } from "./Text.types";
+import {
+  TextProps,
+  TextVariant,
+  TextAlign,
+  TextSize,
+  TextFontWeight,
+} from "./Text.types";
 import { cva } from "@/shared/lib/utils/cva/cva";
 import { classNames } from "@/shared/lib/utils/classNames/classNames";
 
@@ -28,8 +34,20 @@ const textVariants = cva({
       [TextSize.XL2]: styles.xl2 || "",
       [TextSize.XL3]: styles.xl3 || "",
       [TextSize.XL4]: styles.xl4 || "",
-      [TextSize.MAX]: styles.max || "",
+      [TextSize.XL5]: styles.xl5 || "",
+      [TextSize.XL6]: styles.xl6 || "",
       [TextSize.PERCENTAGE]: styles.percentage || "",
+    },
+    fontWeight: {
+      [TextFontWeight.XM]: styles.xmFontWeight || "",
+      [TextFontWeight.SM]: styles.smFontWeight || "",
+      [TextFontWeight.MD]: styles.mdFontWeight || "",
+      [TextFontWeight.LG]: styles.lgFontWeight || "",
+      [TextFontWeight.XL]: styles.xlFontWeight || "",
+      [TextFontWeight.XL2]: styles.xl2FontWeight || "",
+      [TextFontWeight.XL3]: styles.xl3FontWeight || "",
+      [TextFontWeight.XL4]: styles.xl4FontWeight || "",
+      [TextFontWeight.XL5]: styles.xl5FontWeight || "",
     },
   },
   defaultVariants: {
@@ -44,6 +62,7 @@ export const Text: React.FC<TextProps> = ({
   variant = TextVariant.PRIMARY,
   align = TextAlign.LEFT,
   size = TextSize.MD,
+  fontWeight = TextFontWeight.MD,
   children,
   className,
   ...props
@@ -53,6 +72,7 @@ export const Text: React.FC<TextProps> = ({
       variant,
       align,
       size,
+      fontWeight,
     }).join(" "),
     {},
     [className]

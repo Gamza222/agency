@@ -1,0 +1,446 @@
+.animatedLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none !important;
+  padding-bottom: 2px;
+  width: 100%;
+  overflow: hidden;
+
+  // Underline
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: clamp(1px, 0.15vw, 100rem);
+    background-color: currentColor;
+    transform-origin: right;
+    transform: scaleX(1);
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  // Arrow clone - on the left
+  .animatedLink__arrowClone {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+
+    svg {
+      width: var(--font-size-md);
+      height: var(--font-size-md);
+      color: currentColor;
+    }
+  }
+
+  // Text
+  .animatedLink__text {
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    transform: translateX(0);
+    white-space: nowrap;
+  }
+
+  // Original arrow - on the right
+  .animatedLink__arrow {
+    display: flex;
+    align-items: center;
+    opacity: 1;
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+
+    svg {
+      width: var(--font-size-md);
+      height: var(--font-size-md);
+      color: currentColor;
+    }
+  }
+
+  // Hover effects (desktop only)
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) {
+      // Underline disappears from right to left
+      &::after {
+        transform: scaleX(0);
+        transform-origin: right;
+      }
+
+      // Text moves right (size-specific, calculated per size class)
+      .animatedLink__text {
+        // Default fallback, overridden by size classes
+        transform: translateX(calc(var(--font-size-md) * 1.2));
+      }
+
+      // Original arrow flicks 2 times and disappears
+      .animatedLink__arrow {
+        animation: arrow-flicker-disappear 0.8s ease forwards;
+      }
+
+      // Arrow clone flicks 2 times and appears
+      .animatedLink__arrowClone {
+        transform: translateX(0);
+        animation: arrow-clone-flicker-appear 0.8s ease forwards;
+      }
+    }
+
+    // Unhover state (forced via JS - takes precedence over hover)
+    &.animatedLink_unhovering {
+      // Underline appears from left to right
+      &::after {
+        transform: scaleX(1) !important;
+        transform-origin: left !important;
+      }
+
+      // Text moves back
+      .animatedLink__text {
+        transform: translateX(0) !important;
+      }
+
+      // Arrow clone flicks 2 times and disappears
+      .animatedLink__arrowClone {
+        transform: translateX(-50px) !important;
+        animation: arrow-clone-flicker-disappear 0.8s ease forwards;
+      }
+
+      // Original arrow flicks 2 times and reappears
+      .animatedLink__arrow {
+        animation: arrow-flicker-reappear 0.8s ease forwards;
+      }
+    }
+  }
+
+  // Touch devices: clicked state
+  @media (hover: none) {
+    &.animatedLink_clicked {
+      .animatedLink__arrow {
+        animation: arrow-flicker-stay-hidden 0.8s ease forwards;
+      }
+    }
+  }
+}
+
+// Original arrow - flicks 2 times then disappears
+@keyframes arrow-flicker-disappear {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  12.5% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  37.5% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+// Original arrow - flicks 2 times then reappears
+@keyframes arrow-flicker-reappear {
+  0% {
+    opacity: 0;
+  }
+  12.5% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  37.5% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Arrow clone - flicks 2 times then appears
+@keyframes arrow-clone-flicker-appear {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  12.5% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  37.5% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Arrow clone - flicks 2 times then disappears
+@keyframes arrow-clone-flicker-disappear {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  12.5% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  37.5% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+}
+
+// Touch devices: arrow flickers and stays hidden
+@keyframes arrow-flicker-stay-hidden {
+  0% {
+    opacity: 1;
+  }
+  12.5% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  37.5% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+// Variant styles
+.navbar {
+  color: var(--color-white, #fff);
+}
+
+.default {
+  color: var(--color-black, #000);
+}
+
+.sm {
+  font-size: var(--font-size-sm);
+  gap: var(--font-size-sm);
+  letter-spacing: -0.01em;
+
+  .animatedLink__arrow svg,
+  .animatedLink__arrowClone svg {
+    width: var(--font-size-sm);
+    height: var(--font-size-sm);
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) .animatedLink__text {
+      transform: translateX(calc(var(--font-size-sm) * 1.2));
+    }
+  }
+}
+
+.md {
+  font-size: var(--font-size-md);
+  gap: var(--font-size-md);
+  letter-spacing: -0.01em;
+
+  .animatedLink__arrow svg,
+  .animatedLink__arrowClone svg {
+    width: var(--font-size-md);
+    height: var(--font-size-md);
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) .animatedLink__text {
+      transform: translateX(calc(var(--font-size-md) * 1.2));
+    }
+  }
+}
+
+.lg {
+  font-size: var(--font-size-lg);
+  gap: var(--font-size-lg);
+
+  .animatedLink__arrow svg,
+  .animatedLink__arrowClone svg {
+    width: var(--font-size-lg);
+    height: var(--font-size-lg);
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) .animatedLink__text {
+      transform: translateX(calc(var(--font-size-lg) * 1.2));
+    }
+  }
+}
+
+.xl {
+  font-size: var(--font-size-xl);
+  gap: var(--font-size-xl);
+
+  .animatedLink__arrow svg,
+  .animatedLink__arrowClone svg {
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) .animatedLink__text {
+      transform: translateX(calc(var(--font-size-xl) * 1.2));
+    }
+  }
+}
+
+.xl2 {
+  font-size: var(--font-size-2xl);
+  gap: var(--font-size-2xl);
+
+  .animatedLink__arrow svg,
+  .animatedLink__arrowClone svg {
+    width: var(--font-size-2xl);
+    height: var(--font-size-2xl);
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) .animatedLink__text {
+      transform: translateX(calc(var(--font-size-2xl) * 1.2));
+    }
+  }
+}
+
+.xl3 {
+  font-size: var(--font-size-3xl);
+  gap: var(--font-size-3xl);
+
+  .animatedLink__arrow svg,
+  .animatedLink__arrowClone svg {
+    width: var(--font-size-3xl);
+    height: var(--font-size-3xl);
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) .animatedLink__text {
+      transform: translateX(calc(var(--font-size-3xl) * 1.2));
+    }
+  }
+}
+
+.xl4 {
+  font-size: var(--font-size-4xl);
+  gap: var(--font-size-4xl);
+
+  .animatedLink__arrow svg,
+  .animatedLink__arrowClone svg {
+    width: var(--font-size-4xl);
+    height: var(--font-size-4xl);
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) .animatedLink__text {
+      transform: translateX(calc(var(--font-size-4xl) * 1.2));
+    }
+  }
+}
+
+.xl5 {
+  font-size: var(--font-size-5xl);
+  gap: var(--font-size-5xl);
+
+  .animatedLink__arrow svg,
+  .animatedLink__arrowClone svg {
+    width: var(--font-size-5xl);
+    height: var(--font-size-5xl);
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.animatedLink_unhovering) .animatedLink__text {
+      transform: translateX(calc(var(--font-size-5xl) * 1.2));
+    }
+  }
+}
+
+.xmFontWeight {
+  font-weight: 100;
+  letter-spacing: -0.03em !important;
+}
+
+.smFontWeight {
+  font-weight: 200;
+  letter-spacing: -0.04em !important;
+}
+
+.mdFontWeight {
+  font-weight: 300;
+  letter-spacing: -0.04em !important;
+}
+
+.lgFontWeight {
+  font-weight: 400;
+  letter-spacing: -0.04em !important;
+}
+
+.xlFontWeight {
+  font-weight: 500;
+  letter-spacing: -0.02em !important;
+}
+
+.xl2FontWeight {
+  font-weight: 520;
+  letter-spacing: -0.02em !important;
+}
+
+.xl3FontWeight {
+  font-weight: 700;
+  letter-spacing: -0.02em !important;
+}
+
+.xl4FontWeight {
+  font-weight: 800;
+}
+
+.xl5FontWeight {
+  font-weight: 900;
+}

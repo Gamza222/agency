@@ -25,3 +25,6 @@ export const END_OPACITY = 1; // Final opacity
 
 // Easing function: cubic-bezier for fast start, slow end
 export const EASING_CURVE = "cubic-bezier(0.2, 0, 0.3, 0.6)";
+
+// Animation completion offset (call onAnimationComplete slightly before animation ends)
+export const ANIMATION_COMPLETE_OFFSET_MS = 800;

@@ -14,6 +14,7 @@ import {
   isProduction,
   isTest,
 } from './validation';
+import { getEnv } from './env-utils';
 
 export class EnvironmentConfig implements EnvConfig {
   // Environment detection
@@ -111,19 +112,19 @@ export class EnvironmentConfig implements EnvConfig {
   }
 
   private getString(key: string, defaultValue: string): string {
-    const value = process.env[key];
+    const value = getEnv(key);
     return value !== undefined ? value : defaultValue;
   }
 
   private getNumber(key: string, defaultValue: number): number {
-    const value = process.env[key];
+    const value = getEnv(key);
     if (value === undefined) return defaultValue;
     const parsed = Number(value);
     return isNaN(parsed) ? defaultValue : parsed;
   }
 
   private getBoolean(key: string, defaultValue: boolean): boolean {
-    const value = process.env[key];
+    const value = getEnv(key);
     if (value === undefined) return defaultValue;
     return value === 'true' || value === '1';
   }

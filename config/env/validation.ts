@@ -7,12 +7,13 @@
 
 import { Environment, EnvValidationResult, EnvVariableNames } from './types';
 import { ENV_DEFAULTS, ENV_VALIDATION_RULES, REQUIRED_ENV_VARS } from './constants';
+import { getNodeEnv, getEnv } from './env-utils';
 
 /**
  * Get current environment from NODE_ENV
  */
 export function getCurrentEnvironment(): Environment {
-  const nodeEnv = process.env.NODE_ENV as Environment;
+  const nodeEnv = getNodeEnv() as Environment;
   return Object.values(Environment).includes(nodeEnv) ? nodeEnv : Environment.Development;
 }
 
@@ -104,7 +105,7 @@ export function validateEnvironmentVariables(): EnvValidationResult {
 
   // Check required variables
   for (const key of REQUIRED_ENV_VARS) {
-    const value = process.env[key];
+    const value = getEnv(key);
     const validation = validateEnvVariable(key, value || '');
 
     if (!validation.isValid) {
@@ -113,8 +114,11 @@ export function validateEnvironmentVariables(): EnvValidationResult {
   }
 
   // Check all environment variables
-  for (const [key, value] of Object.entries(process.env)) {
-    if (key in ENV_DEFAULTS) {
+  // Note: In browser, we can't iterate all env vars, so we check known ones
+  const knownEnvVars = Object.keys(ENV_DEFAULTS);
+  for (const key of knownEnvVars) {
+    const value = getEnv(key);
+    if (value !== undefined) {
       const validation = validateEnvVariable(key as keyof EnvVariableNames, value || '');
 
       if (!validation.isValid) {
@@ -125,7 +129,7 @@ export function validateEnvironmentVariables(): EnvValidationResult {
 
   // Check for production-specific warnings
   if (isProduction()) {
-    const jwtSecret = process.env.JWT_SECRET;
+    const jwtSecret = getEnv('JWT_SECRET');
     if (jwtSecret === ENV_DEFAULTS.JWT_SECRET) {
       warnings.push('JWT_SECRET is using default value in production');
     }

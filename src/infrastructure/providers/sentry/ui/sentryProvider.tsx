@@ -1,7 +1,7 @@
 'use client';
 
 import { type FC, type PropsWithChildren, useEffect } from 'react';
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from '@sentry/react';
 import { envConfig } from '../../../../../config/env';
 
 interface SentryProviderProps extends PropsWithChildren {

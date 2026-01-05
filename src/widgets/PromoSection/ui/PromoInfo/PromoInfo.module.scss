@@ -1,0 +1,22 @@
+@use "base/base" as *;
+
+.promoInfo {
+  width: 100%;
+  position: relative;
+  display: flex;
+  padding: var(--padding-section-top) var(--padding-desktop-side)
+    clamp(10rem, 16vw, 100rem) var(--padding-desktop-side);
+  background-color: var(--color-white);
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: var(--padding-section-top) var(--padding-mobile-side)
+      clamp(5rem, 16vw, 100rem) var(--padding-mobile-side);
+  }
+}
+
+.promoInfo__content {
+  color: var(--color-white, #fff);
+  text-align: center;
+  width: 100%;
+}
+

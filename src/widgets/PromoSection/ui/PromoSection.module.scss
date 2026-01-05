@@ -1,0 +1,96 @@
+@use "base/base" as *;
+
+.promoSection {
+  position: relative;
+  z-index: 9998;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  min-height: 100vh;
+  padding-left: var(--padding-desktop-side);
+  padding-right: var(--padding-desktop-side);
+  padding-top: 18.5vw;
+  padding-bottom: var(--padding-section-top);
+
+  @media (max-width: $breakpoint-mobile) {
+    padding-left: var(--padding-mobile-side);
+    padding-right: var(--padding-mobile-side);
+    padding-top: 10rem;
+  }
+}
+
+.promoSection__background {
+  position: relative !important;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100%;
+  z-index: 9997;
+
+  > canvas {
+    animation: none !important;
+    transform: none !important;
+    width: 100% !important;
+  }
+
+  > div {
+    width: 90% !important;
+    height: 90% !important;
+    top: initial !important;
+    left: initial !important;
+
+    bottom: 0 !important;
+    right: 0 !important;
+
+    @media (max-width: $breakpoint-mobile) {
+      right: 0 !important;
+    }
+  }
+}
+.promoSection__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(3rem, 6vw, 10rem);
+  padding: 0 var(--padding-desktop-side);
+  padding-bottom: 10vh;
+  background-color: var(--color-white);
+  align-items: flex-start;
+  flex: 1;
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    padding: 0 var(--padding-mobile-side);
+    padding-bottom: var(--padding-section-top);
+  }
+}
+
+.promoSection__content__promo {
+  width: 100%;
+
+  @media (max-width: $breakpoint-mobile) {
+    transform: translateX(calc(-1.2 * var(--padding-mobile-side)));
+  }
+}
+
+.promoSection__content__text {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: clamp(6rem, 7vw, 100rem);
+}
+
+.promoSection__topText {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4rem, 5vw, 100rem);
+  width: 100%;
+}
+
+.promoSection__textBottom {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.15rem, 0.3vw, 100rem);
+  width: 100%;
+  text-transform: uppercase;
+}

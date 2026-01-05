@@ -1,4 +1,4 @@
-import { mockMediaQueryInterface } from '../../types/types';
+import { mockMediaQueryInterface } from "../../types/types";
 
 /**
  * Creates a mock matchMedia function for testing media queries
@@ -6,12 +6,14 @@ import { mockMediaQueryInterface } from '../../types/types';
  * @param matches - Whether the media query should match
  * @returns A mock MediaQueryList object
  */
-export const mockMatchMedia = (matches: boolean = false): mockMediaQueryInterface => {
+export const mockMatchMedia = (
+  matches: boolean = false
+): mockMediaQueryInterface => {
   const listeners: Array<(event: MediaQueryListEvent) => void> = [];
 
   const mediaQueryMock: mockMediaQueryInterface = {
     matches,
-    media: '(max-width: 768px)',
+    media: "(max-width: 1020px)",
     onchange: null,
 
     addListener(callback: (event: MediaQueryListEvent) => void): void {
@@ -30,7 +32,9 @@ export const mockMatchMedia = (matches: boolean = false): mockMediaQueryInterfac
 };
 
 // Mock the global matchMedia function
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation((_query: string) => mockMatchMedia(false)),
+  value: jest
+    .fn()
+    .mockImplementation((_query: string) => mockMatchMedia(false)),
 });

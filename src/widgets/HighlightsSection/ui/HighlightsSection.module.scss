@@ -1,0 +1,21 @@
+.highlightsSection {
+  position: relative;
+  width: 100%;
+}
+
+// Shared container for PreCanvas + Project
+// Height calculated to allow Project to scroll up and overlap PreCanvas
+.highlightsSection__container {
+  top: 0;
+  z-index: 9998;
+  position: relative;
+  width: 100%;
+}
+
+.highlightsSection__containerBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

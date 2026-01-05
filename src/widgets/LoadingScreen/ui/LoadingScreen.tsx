@@ -1,42 +1,58 @@
 "use client";
 
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { classNames, Mods } from "@/shared/lib/utils/classNames/classNames";
-import WarpLogo from "@/shared/assets/icons/logo-bg-01.svg";
+import WarpLogo from "@/shared/assets/icons/logo-bg-01.svg?react";
 import { LoadingScreenMode } from "../types/types";
 import type { LoadingScreenProps } from "../types/types";
+import {
+  DEFAULT_ANIMATION_DURATION_MS,
+  DEFAULT_STROKE_DURATION_MS,
+  DEFAULT_STROKE_DELAY_MS,
+  DEFAULT_FLICKER_DURATION_S,
+} from "../lib/constants/animation.constants";
+import { useNavbarMountCheck } from "../lib/hooks/useNavbarMountCheck";
+import { usePercentageAnimation } from "../lib/hooks/usePercentageAnimation";
+import { useAnimationEndHandlers } from "../lib/hooks/useAnimationEndHandlers";
 import styles from "./LoadingScreen.module.scss";
 import { Text, TextSize, TextVariant } from "@/shared/ui/Text";
 
 const LoadingScreen = memo((props: LoadingScreenProps) => {
   const {
     className,
-    duration = 2000,
-    strokeDuration = 600,
-    strokeDelay = 100,
-    flickerDuration = 0.15,
+    duration = DEFAULT_ANIMATION_DURATION_MS,
+    strokeDuration = DEFAULT_STROKE_DURATION_MS,
+    strokeDelay = DEFAULT_STROKE_DELAY_MS,
+    flickerDuration = DEFAULT_FLICKER_DURATION_S,
     onAnimationComplete,
     animationsComplete = false,
     mode = LoadingScreenMode.DEFAULT,
     scrollProgress: _scrollProgress = 0, // Prefixed with _ to indicate intentionally unused
   } = props;
-  const [navbarMounted, setNavbarMounted] = useState(false);
+
+  const navbarMounted = useNavbarMountCheck();
   const [loadingBarComplete, setLoadingBarComplete] = useState(false);
   const [percentageGoalComplete, setPercentageGoalComplete] = useState(false);
-  const [percentageComplete, setPercentageComplete] = useState(false);
-  const [exitAnimationStarted, setExitAnimationStarted] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
 
-  const progressRef = useRef<HTMLParagraphElement>(null);
-  const percentageRef = useRef<HTMLParagraphElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const handlePercentageGoalComplete = useCallback(() => {
+    setPercentageGoalComplete(true);
+  }, []);
+
+  const { progressRef, percentageComplete } = usePercentageAnimation({
+    enabled: percentageGoalComplete,
+    duration,
+    strokeDuration,
+    strokeDelay,
+    flickerDuration,
+  });
+
+  const { percentageRef, containerRef, exitAnimationStarted, isHidden } =
+    useAnimationEndHandlers({
+      mode,
+      onAnimationComplete,
+      percentageHideAnimationName: styles.percentageHide || "",
+      slideOutRotateAnimationName: styles.slideOutRotate || "",
+    });
 
   // Memoized CSS animation timing variables
   const animationStyle = useMemo(
@@ -75,112 +91,9 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
     [navbarMounted, percentageComplete]
   );
 
-  // Memoized callbacks for animation handlers
   const handleLoadingBarComplete = useCallback(() => {
     setLoadingBarComplete(true);
   }, []);
-
-  const handlePercentageGoalComplete = useCallback(() => {
-    setPercentageGoalComplete(true);
-  }, []);
-
-  // Wait for navbar to mount before starting animations
-  useEffect(() => {
-    const isNavbarMounted = () =>
-      document.body.getAttribute("data-navbar-mounted") === "true";
-
-    if (isNavbarMounted()) {
-      setNavbarMounted(true);
-      return;
-    }
-
-    const observer = new MutationObserver(() => {
-      if (isNavbarMounted()) {
-        setNavbarMounted(true);
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ["data-navbar-mounted"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Animate percentage counter (0 -> 100)
-  useEffect(() => {
-    if (!percentageGoalComplete || !progressRef.current) return;
-
-    const totalDuration =
-      duration + strokeDuration + strokeDelay - flickerDuration * 6000 + 600;
-    const startTime = Date.now();
-    let frameId: number;
-
-    const easeOutQuad = (t: number): number => t * (2 - t);
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(1, elapsed / totalDuration);
-      const value = Math.floor(easeOutQuad(progress) * 100);
-
-      if (progressRef.current) {
-        progressRef.current.textContent = String(value);
-      }
-
-      if (progress < 1) {
-        frameId = requestAnimationFrame(animate);
-      } else {
-        if (progressRef.current) progressRef.current.textContent = "100";
-        setPercentageComplete(true);
-      }
-    };
-
-    frameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frameId);
-  }, [
-    percentageGoalComplete,
-    duration,
-    strokeDuration,
-    strokeDelay,
-    flickerDuration,
-  ]);
-
-  // Handle percentage hide animation end
-  useEffect(() => {
-    if (!percentageRef.current) return;
-
-    const handleAnimationEnd = (event: AnimationEvent) => {
-      if (event.animationName === styles.percentageHide) {
-        if (mode === LoadingScreenMode.HOMEPAGE) {
-          onAnimationComplete?.();
-        } else {
-          setTimeout(() => setExitAnimationStarted(true), 100);
-        }
-      }
-    };
-
-    const el = percentageRef.current;
-    el.addEventListener("animationend", handleAnimationEnd);
-    return () => el.removeEventListener("animationend", handleAnimationEnd);
-  }, [mode, onAnimationComplete]);
-
-  // Handle exit animation end (DEFAULT mode only)
-  useEffect(() => {
-    if (!containerRef.current || mode !== LoadingScreenMode.DEFAULT) return;
-
-    const handleExitEnd = (event: AnimationEvent) => {
-      if (event.animationName === styles.slideOutRotate) {
-        setIsHidden(true);
-        onAnimationComplete?.();
-      }
-    };
-
-    const el = containerRef.current;
-    el.addEventListener("animationend", handleExitEnd);
-    return () => el.removeEventListener("animationend", handleExitEnd);
-  }, [mode, onAnimationComplete]);
 
   // Memoized computed values
   const isHomepage = mode === LoadingScreenMode.HOMEPAGE;

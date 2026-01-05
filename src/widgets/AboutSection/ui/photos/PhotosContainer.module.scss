@@ -1,0 +1,54 @@
+@use "base/base" as *;
+
+.photosContainer {
+  display: flex;
+  width: 100%;
+  position: relative;
+  width: 50vw;
+}
+
+.photosContainer__photo {
+  min-height: 400px;
+  min-width: 260px;
+  width: 32vw;
+  height: 48vw;
+  overflow: hidden;
+  background-color: var(--gray-color, #f3f4f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Image styling to fit container, maintain quality, scale, and be centered
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  // If no image, show placeholder
+  &:empty::before {
+    width: 100%;
+    height: 100%;
+    background-color: var(--gray-color, #f3f4f6);
+  }
+}
+
+.photosContainer__photo:nth-child(1) {
+  position: absolute;
+  top: -10%;
+  left: 30%;
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .photosContainer {
+    width: 100%;
+  }
+  .photosContainer__photo {
+    width: 80vw;
+    height: 120vw;
+    // max-width: 600px;
+    max-height: 480px;
+  }
+}

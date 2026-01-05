@@ -21,8 +21,21 @@ export enum TextSize {
   XL2 = "xl2",
   XL3 = "xl3",
   XL4 = "xl4",
-  MAX = "max",
+  XL5 = "xl5",
+  XL6 = "xl6",
   PERCENTAGE = "percentage",
+}
+
+export enum TextFontWeight {
+  XM = "100",
+  SM = "200",
+  MD = "300",
+  LG = "400",
+  XL = "500",
+  XL2 = "600",
+  XL3 = "700",
+  XL4 = "800",
+  XL5 = "900",
 }
 
 type TextTag = "h1" | "h2" | "h3" | "p" | "span";
@@ -32,5 +45,6 @@ export interface TextProps extends HTMLAttributes<HTMLElement> {
   variant?: TextVariant;
   align?: TextAlign;
   size?: TextSize;
+  fontWeight?: TextFontWeight;
   className?: string | undefined;
 }

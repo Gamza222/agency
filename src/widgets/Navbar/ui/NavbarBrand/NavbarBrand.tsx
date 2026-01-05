@@ -1,10 +1,10 @@
 "use client";
 
 import React, { memo } from "react";
-import WarpLogo from "@/shared/assets/icons/logo-bg-01.svg";
+import WarpLogo from "@/shared/assets/icons/logo-bg-01.svg?react";
 import styles from "./NavbarBrand.module.scss";
 // import { Text, TextVariant } from "@/shared/ui/Text"; // Unused - removed
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 interface NavbarBrandProps {
   brandText?: string;

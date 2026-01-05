@@ -24,8 +24,10 @@ export {
 } from './validation';
 
 // Environment variable access
+import { getEnv } from './env-utils';
+
 export const getEnvVariable = (key: string, defaultValue?: string): string => {
-  const value = process.env[key];
+  const value = getEnv(key);
   if (value === undefined && defaultValue === undefined) {
     throw new Error(`Environment variable ${key} is required but not set`);
   }

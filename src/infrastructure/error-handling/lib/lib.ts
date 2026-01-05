@@ -9,7 +9,7 @@ export const logError = (error: Error, errorInfo: ErrorInfo): void => {
   // Send to Sentry in production
   if (process.env.NODE_ENV === 'production') {
     // Import Sentry dynamically to avoid issues in tests
-    void import('@sentry/nextjs').then((Sentry) => {
+    void import('@sentry/react').then((Sentry) => {
       Sentry.captureException(error, {
         extra: {
           componentStack: errorInfo.componentStack,

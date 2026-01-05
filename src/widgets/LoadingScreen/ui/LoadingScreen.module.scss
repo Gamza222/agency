@@ -1,5 +1,7 @@
 // LoadingScreen SCSS Module - NO Tailwind
 
+@use "base/base" as *;
+
 // Base styles shared by both modes
 .loadingScreen {
   width: 100%;
@@ -15,10 +17,10 @@
   padding-left: var(--padding-desktop-side);
   padding-right: var(--padding-desktop-side);
   z-index: 9998;
+  background-color: red;
   // No background - VideoBackground shows through
-  background: transparent;
   // Transform origin for scroll animation - right-top corner
-  transform-origin: right top;
+  transform-origin: 0% 100%;
   // DEFAULT mode: position fixed
   position: fixed;
   top: 0;
@@ -35,12 +37,13 @@
 // Includes all styles that were in the old _relative class
 .loadingScreen_homepage {
   position: relative;
+  background-color: transparent;
   top: calc(
     var(--logo-height, 25px) * -1 - var(--padding-desktop-top, 5px) * 2 - 10px
   );
   left: 0;
 
-  transform-origin: right top;
+  transform-origin: 0% 100%;
 }
 
 // Scroll-animated state - transform is now calculated in JavaScript for browser compatibility
@@ -58,7 +61,7 @@
   animation: slideOutRotate 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
 }
 
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-mobile) {
   .loadingScreen {
     height: 100vh;
     padding-top: calc(

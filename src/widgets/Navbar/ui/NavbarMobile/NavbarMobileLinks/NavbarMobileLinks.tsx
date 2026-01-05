@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router-dom";
 import { classNames, Mods } from "@/shared/lib/utils/classNames/classNames";
 import {
   NAVBAR_ANIMATION,
@@ -9,8 +9,12 @@ import {
 } from "../../../model/types/constants/constants";
 import styles from "./NavbarMobileLinks.module.scss";
 import { Text, TextSize, TextVariant } from "@/shared/ui/Text";
-import Link from "next/link";
-import ArrowIcon from "@/shared/assets/icons/arrow.svg";
+import { Link } from "react-router-dom";
+import {
+  AnimatedLink,
+  AnimatedLinkVariant,
+} from "@/shared/ui/AnimatedLink/AnimatedLink";
+import { AnimatedLinkSize } from "@/shared/ui/AnimatedLink/AnimatedLink.types";
 
 interface NavbarMobileLinksProps {
   isOpen: boolean;
@@ -19,7 +23,8 @@ interface NavbarMobileLinksProps {
 
 const NavbarMobileLinks = memo(
   ({ isOpen, className }: NavbarMobileLinksProps) => {
-    const pathname = usePathname();
+    const location = useLocation();
+    const pathname = location.pathname;
     const [shouldRender, setShouldRender] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
@@ -68,7 +73,7 @@ const NavbarMobileLinks = memo(
                 ></span>
                 <Text
                   variant={TextVariant.PRIMARY}
-                  size={TextSize.MAX}
+                  size={TextSize.XL5}
                   as="span"
                   className={styles.navbarMobileLinks__link}
                 >
@@ -87,25 +92,13 @@ const NavbarMobileLinks = memo(
           >
             / let's talk
           </Text>
-          <Link
+          <AnimatedLink
             href="/contact"
+            title="@the_warp_agency"
+            variant={AnimatedLinkVariant.NAVBAR}
+            size={AnimatedLinkSize.XL3}
             className={styles.navbarMobileLinks__bottomLink}
-          >
-            <span className={styles.navbarMobileLinks__bottomLinkArrowClone}>
-              <ArrowIcon />
-            </span>
-            <Text
-              variant={TextVariant.PRIMARY}
-              size={TextSize.XL3}
-              as="span"
-              className={styles.navbarMobileLinks__bottomLinkText}
-            >
-              @the_warp_agency
-            </Text>
-            <span className={styles.navbarMobileLinks__bottomLinkArrow}>
-              <ArrowIcon />
-            </span>
-          </Link>
+          />
         </div>
       </div>
     );

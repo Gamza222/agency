@@ -100,18 +100,18 @@ export const MyButton: React.FC<MyButtonProps> = ({
 
 ```typescript
 // MyButton.types.ts
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from "react";
 
 export enum ButtonVariant {
-  PRIMARY = 'primary',
-  SECONDARY = 'secondary',
-  DANGER = 'danger',
+  PRIMARY = "primary",
+  SECONDARY = "secondary",
+  DANGER = "danger",
 }
 
 export enum ButtonSize {
-  SM = 'sm',
-  MD = 'md',
-  LG = 'lg',
+  SM = "sm",
+  MD = "md",
+  LG = "lg",
 }
 
 export interface MyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -127,26 +127,28 @@ export interface MyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 ```typescript
 // MyButton.variants.ts
-import { cva } from 'class-variance-authority';
+import { cva } from "class-variance-authority";
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        danger: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        danger:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
       },
       size: {
-        sm: 'h-9 px-3 text-sm',
-        md: 'h-10 px-4 py-2',
-        lg: 'h-11 px-8 text-lg',
+        sm: "h-9 px-3 text-sm",
+        md: "h-10 px-4 py-2",
+        lg: "h-11 px-8 text-lg",
       },
     },
     defaultVariants: {
-      variant: 'primary',
-      size: 'md',
+      variant: "primary",
+      size: "md",
     },
   }
 );
@@ -168,7 +170,7 @@ export const buttonVariants = cva(
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid theme('colors.primary.500');
+    outline: 2px solid theme("colors.primary.500");
     outline-offset: 2px;
   }
 
@@ -177,7 +179,7 @@ export const buttonVariants = cva(
     opacity: 0.5;
   }
 
-  &[data-loading='true'] {
+  &[data-loading="true"] {
     cursor: not-allowed;
   }
 }
@@ -353,7 +355,7 @@ A customizable button component with multiple variants and sizes.
 ## Usage
 
 ```tsx
-import { MyButton } from '@/shared/ui/MyButton/MyButton';
+import { MyButton } from "@/shared/ui/MyButton/MyButton";
 
 <MyButton variant="primary" size="md">
   Click me
@@ -450,7 +452,7 @@ export function withLoading<T extends object>(
 
 ```typescript
 export const MyButton = React.memo<MyButtonProps>(
-  ({ variant = 'primary', size = 'md', children, className, ...props }) => {
+  ({ variant = "primary", size = "md", children, className, ...props }) => {
     // Component implementation
   }
 );
@@ -472,10 +474,10 @@ export const MyPage = () => (
 
 ```typescript
 // Use dynamic imports for heavy dependencies
-const heavyLibrary = await import('heavy-library');
+const heavyLibrary = await import("heavy-library");
 
 // Tree-shake unused code
-import { specificFunction } from 'large-library';
+import { specificFunction } from "large-library";
 ```
 
 ## 🎨 Styling Guidelines
@@ -499,11 +501,11 @@ import { specificFunction } from 'large-library';
 
 ```typescript
 // Use CVA for consistent variant management
-const buttonVariants = cva('base-styles', {
+const buttonVariants = cva("base-styles", {
   variants: {
     variant: {
-      primary: 'primary-styles',
-      secondary: 'secondary-styles',
+      primary: "primary-styles",
+      secondary: "secondary-styles",
     },
   },
 });
@@ -517,7 +519,7 @@ const buttonVariants = cva('base-styles', {
   padding: 0.5rem 1rem;
 
   // Tablet
-  @media (min-width: 768px) {
+  @media (min-width: 1020) {
     padding: 0.75rem 1.5rem;
   }
 

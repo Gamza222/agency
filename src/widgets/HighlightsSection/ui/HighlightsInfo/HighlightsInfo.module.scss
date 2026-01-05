@@ -1,0 +1,57 @@
+@use "base/base" as *;
+
+.highlightsInfo {
+  width: 100%;
+  position: relative;
+  display: flex;
+  padding: var(--padding-section-top) var(--padding-desktop-side);
+  background-color: var(--color-white);
+
+  // Filler to ensure 100vh visual height even with small content
+  &::after {
+    background-color: var(--color-white);
+    content: "";
+    height: 100lvh;
+    left: 0;
+    position: absolute;
+    top: 100%;
+    width: 100%;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: var(--padding-section-top) var(--padding-mobile-side);
+  }
+}
+
+.highlightsInfo__content {
+  color: var(--color-white, #fff);
+  text-align: center;
+  width: 100%;
+
+  &__info {
+    text-transform: uppercase;
+  }
+
+  &__title {
+    transform: translateX(-1vw);
+    margin-top: clamp(0.3rem, 0.3vw, 100rem) !important;
+  }
+
+  &__nav {
+    margin-top: clamp(2rem, 2.2vw, 100rem);
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 100rem);
+
+    &__link {
+      width: auto !important;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      flex-direction: column;
+      &__link {
+        width: 100% !important;
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@ export const NAVBAR_ANIMATION = {
 } as const;
 
 export const NAVBAR_BREAKPOINTS = {
-  MOBILE_MAX: 768, // pixels
+  MOBILE_MAX: 1020, // pixels
 } as const;
 
 export const NAVBAR_LINKS = [

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo } from "react";
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router-dom";
 import { classNames } from "@/shared/lib/utils/classNames/classNames";
 import type { NavbarProps } from "../../types/types";
 import {
@@ -12,11 +12,12 @@ import {
 import NavbarBrand from "../NavbarBrand/NavbarBrand";
 import styles from "./NavbarDesktop.module.scss";
 import { Text, TextSize, TextVariant } from "@/shared/ui/Text";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 const NavbarDesktop = memo((props: NavbarProps) => {
   const { className, disabled = false } = props;
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
 
   const style = {
     "--brand-fade-duration": `${NAVBAR_ANIMATION.BRAND_FADE_DURATION}s`,

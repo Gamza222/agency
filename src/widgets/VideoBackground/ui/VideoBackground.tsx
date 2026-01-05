@@ -5,33 +5,24 @@
 
 "use client";
 
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./VideoBackground.module.scss";
-import { ANIMATION_DURATION_MS, ANIMATION_DURATION_S } from "../lib/constants";
+import { ANIMATION_DURATION_S } from "../lib/constants";
+import { useImageLoad } from "../lib/hooks/useImageLoad";
+import { useAnimationCompletion } from "../lib/hooks/useAnimationCompletion";
 import type { VideoBackgroundProps } from "../types/types";
 import { classNames } from "@/shared/lib/utils/classNames/classNames";
 import videoBg from "@/shared/assets/icons/video-bg.webp";
 
 export const VideoBackground: React.FC<VideoBackgroundProps> = memo(
   ({ className, onAnimationComplete, onLoadComplete, shouldStart = false }) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [animationStarted, setAnimationStarted] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const didComplete = useRef({ load: false, animation: false });
+    const [animationStarted, setAnimationStarted] = useState(false);
 
-    const handleImageLoad = useCallback(() => {
-      if (didComplete.current.load) return;
-      didComplete.current.load = true;
-      setIsLoaded(true);
-      onLoadComplete?.();
-    }, [onLoadComplete]);
-
-    // Check for cached image on mount
-    useEffect(() => {
-      const img = containerRef.current?.querySelector("img");
-      if (img?.complete) handleImageLoad();
-    }, [handleImageLoad]);
+    const { isLoaded, handleImageLoad } = useImageLoad({
+      containerRef,
+      onLoadComplete,
+    });
 
     // Start animation when loaded and shouldStart is true
     useEffect(() => {
@@ -40,45 +31,60 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = memo(
       }
     }, [isLoaded, shouldStart, animationStarted]);
 
-    // Signal animation complete
-    useEffect(() => {
-      if (!animationStarted) return;
+    // Handle animation completion
+    useAnimationCompletion({
+      animationStarted,
+      onAnimationComplete,
+    });
 
-      const timer = setTimeout(() => {
-        if (!didComplete.current.animation) {
-          didComplete.current.animation = true;
-          onAnimationComplete?.();
-        }
-      }, ANIMATION_DURATION_MS - 800);
+    // Memoize container style
+    const containerStyle = useMemo(
+      () =>
+        ({
+          ["--animation-duration" as string]: `${ANIMATION_DURATION_S}s`,
+        }) as React.CSSProperties,
+      []
+    );
 
-      return () => clearTimeout(timer);
-    }, [animationStarted, onAnimationComplete]);
+    // Memoize image class modifiers
+    const imageMods = useMemo(
+      () => ({
+        [styles.videoImage_loaded as string]: animationStarted,
+      }),
+      [animationStarted]
+    );
+
+    // Memoize image style
+    const imageStyle = useMemo(
+      () => ({
+        objectFit: "cover" as const,
+      }),
+      []
+    );
 
     return (
       <div
         ref={containerRef}
         className={classNames(styles.videoBackground, {}, [className])}
-        style={{
-          // Set CSS custom properties for animation duration
-          ["--animation-duration" as string]: `${ANIMATION_DURATION_S}s`,
-        }}
+        style={containerStyle}
         aria-hidden="true"
       >
-        <Image
+        <img
           src={videoBg}
           alt="video-background"
-          fill
-          className={classNames(styles.videoImage, {
-            [styles.videoImage_loaded as string]: animationStarted,
-          })}
+          className={classNames(styles.videoImage, imageMods)}
           onLoad={handleImageLoad}
           onError={() => {
             console.error("Failed to load video background image");
           }}
-          unoptimized // Required for animated WebP - prevents Next.js optimization that would break animation
-          priority // Load immediately
           style={{
-            objectFit: "cover",
+            ...imageStyle,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            position: 'absolute',
+            top: 0,
+            left: 0,
           }}
         />
       </div>

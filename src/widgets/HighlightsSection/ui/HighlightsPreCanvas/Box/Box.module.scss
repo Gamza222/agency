@@ -1,0 +1,77 @@
+// Main box (OVERSCAN) - fills remaining space
+.highlightsPreCanvas__mainBox {
+  width: 100%;
+  border: 0.1rem dashed var(--color-black);
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--font-size-sm) + clamp(1rem, 1.5vw, 100rem));
+  padding: clamp(0.3rem, 0.5vw, 100rem);
+  padding-bottom: clamp(2rem, 2vw, 100rem);
+}
+
+// Middle box (Crop)
+.highlightsPreCanvas__middleBox {
+  width: 92%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.3rem, 0.5vw, 100rem);
+  border: 0.1rem solid var(--color-black);
+  flex: 1;
+  padding: clamp(0.3rem, 0.5vw, 100rem);
+  padding-bottom: clamp(2rem, 2vw, 100rem);
+}
+
+// Inner box (Action safe)
+.highlightsPreCanvas__innerBox {
+  width: 93%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(1rem, 2vw, 100rem);
+  border: 0.1rem dashed var(--color-black);
+  padding: clamp(0.3rem, 0.5vw, 100rem);
+  padding-bottom: clamp(2rem, 2vw, 100rem);
+
+  flex: 1;
+}
+
+// Label rows
+.labelRow {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(1rem, 2vw, 100rem);
+}
+
+.labelText {
+  text-transform: uppercase;
+}
+
+// Expand arrow
+.expandArrow {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.2rem, 0.3vw, 100rem);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(
+    calc(-0.8 * var(--font-size-base) - clamp(0.2rem, 0.3vw, 100rem)),
+    calc(-100% - clamp(0.3rem, 0.5vw, 100rem))
+  );
+
+  > span {
+    white-space: nowrap;
+  }
+
+  > svg {
+    width: calc(var(--font-size-base) * 0.65);
+    transform: translateY(calc(var(--font-size-base) * 0.11));
+  }
+}
