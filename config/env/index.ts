@@ -38,8 +38,8 @@ export const getEnvVariable = (key: string, defaultValue?: string): string => {
 // TYPE EXPORTS - For TypeScript usage
 // ============================================================================
 
-export type { CompleteEnvConfig, EnvConfig, EnvValidationResult } from './types.ts';
-export { Environment } from './types.ts';
+export type { CompleteEnvConfig, EnvConfig, EnvValidationResult } from './types';
+export { Environment } from './types';
 
 // ============================================================================
 // ADVANCED EXPORTS - For advanced usage
@@ -49,9 +49,10 @@ export { Environment } from './types.ts';
 export { validateEnvironmentVariables, validateEnvVariable } from './validation.ts';
 
 // Constants (for advanced usage)
-export { ENV_DEFAULTS, ENV_OVERRIDES, REQUIRED_ENV_VARS, ENV_VALIDATION_RULES } from './constants.ts';
+export { ENV_DEFAULTS, ENV_OVERRIDES, REQUIRED_ENV_VARS, ENV_VALIDATION_RULES } from './constants';
 
 // ============================================================================
 // DEFAULT EXPORT - Main configuration instance
 // ============================================================================
 
+export { envConfig as default } from './config.ts';

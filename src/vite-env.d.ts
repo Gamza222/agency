@@ -19,3 +19,7 @@ declare module '*.svg?url' {
   export default src;
 }
 
+declare module 'vanta/dist/vanta.fog.min.js' {
+  const vantaModule: any;
+  export default vantaModule;
+}
