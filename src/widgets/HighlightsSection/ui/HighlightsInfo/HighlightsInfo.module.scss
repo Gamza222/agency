@@ -14,8 +14,9 @@
     height: 100lvh;
     left: 0;
     position: absolute;
-    top: 100%;
+    top: 95%;
     width: 100%;
+    z-index: 0;
   }
 
   @media (max-width: $breakpoint-mobile) {
@@ -27,6 +28,8 @@
   color: var(--color-white, #fff);
   text-align: center;
   width: 100%;
+  position: relative;
+  z-index: 1;
 
   &__info {
     text-transform: uppercase;

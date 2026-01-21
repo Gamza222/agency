@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { classNames } from "@/shared/lib/utils/classNames/classNames";
@@ -21,6 +21,8 @@ interface ParagraphData {
 export const AboutSection = ({ className }: { className?: string }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const topTextRef = useRef<HTMLDivElement>(null);
+  const textBottomRef = useRef<HTMLDivElement>(null);
 
   // Paragraph data - can be moved to props or constants
   const paragraphs: ParagraphData[] = [
@@ -51,15 +53,90 @@ export const AboutSection = ({ className }: { className?: string }) => {
     },
   ];
 
-  useLayoutEffect(() => {
-    if (!sectionRef.current) return;
+  // useLayoutEffect(() => {
+  //   if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Additional animations can be added here if needed
-    }, sectionRef);
+  //   const ctx = gsap.context(() => {
+  //     // Animate topText child elements separately
+  //     if (topTextRef.current) {
+  //       const paragraphs = topTextRef.current.querySelectorAll(
+  //         `.${styles.aboutSection__content__text__paragraph}`
+  //       );
 
-    return () => ctx.revert();
-  }, []);
+  //       paragraphs.forEach((paragraph) => {
+  //         const title = paragraph.querySelector(
+  //           `.${styles.aboutSection__content__text__paragraph__title}`
+  //         );
+  //         const contentItems = paragraph.querySelectorAll(
+  //           `.${styles.aboutSection__content__text__paragraph__content}, .${styles.whatwedoList__Item}`
+  //         );
+
+  //         // Animate title - each title has its own trigger
+  //         if (title) {
+  //           gsap.fromTo(
+  //             title,
+  //             { opacity: 0 },
+  //             {
+  //               opacity: 1,
+  //               ease: "none",
+  //               scrollTrigger: {
+  //                 trigger: title as Element,
+  //                 start: "bottom bottom",
+  //                 end: "bottom 85%",
+  //                 scrub: true,
+  //                 invalidateOnRefresh: true,
+  //               },
+  //             }
+  //           );
+  //         }
+
+  //         // Animate each content item individually - each item has its own trigger
+  //         contentItems.forEach((item) => {
+  //           gsap.fromTo(
+  //             item,
+  //             { opacity: 0 },
+  //             {
+  //               opacity: 1,
+  //               ease: "none",
+  //               scrollTrigger: {
+  //                 trigger: item as Element,
+  //                 start: "bottom bottom",
+  //                 end: "bottom 85%",
+  //                 scrub: true,
+  //                 invalidateOnRefresh: true,
+  //               },
+  //             }
+  //           );
+  //         });
+  //       });
+  //     }
+
+  //     // Animate textBottom elements separately - each text element has its own trigger
+  //     if (textBottomRef.current) {
+  //       const textElements = textBottomRef.current.querySelectorAll("p");
+
+  //       textElements.forEach((textEl) => {
+  //         gsap.fromTo(
+  //           textEl,
+  //           { opacity: 0 },
+  //           {
+  //             opacity: 1,
+  //             ease: "none",
+  //             scrollTrigger: {
+  //               trigger: textEl as Element,
+  //               start: "bottom bottom",
+  //               end: "bottom 85%",
+  //               scrub: true,
+  //               invalidateOnRefresh: true,
+  //             },
+  //           }
+  //         );
+  //       });
+  //     }
+  //   }, sectionRef);
+
+  //   return () => ctx.revert();
+  // }, []);
 
   return (
     <section
@@ -73,7 +150,7 @@ export const AboutSection = ({ className }: { className?: string }) => {
           <PhotosContainer />
         </div>
         <div className={styles.aboutSection__content__text}>
-          <div className={styles.aboutSection__topText}>
+          <div className={styles.aboutSection__topText} ref={topTextRef}>
             {paragraphs.map((paragraph, index) => (
               <div
                 key={index}
@@ -176,14 +253,14 @@ export const AboutSection = ({ className }: { className?: string }) => {
               </div>
             ))}
           </div>
-          <div className={styles.aboutSection__textBottom}>
+          <div className={styles.aboutSection__textBottom} ref={textBottomRef}>
             <Text
               variant={TextVariant.SECONDARY}
               size={TextSize.XL}
               as="p"
               fontWeight={TextFontWeight.XL2}
             >
-              "Belissimo"
+              "Visual pleasure"
             </Text>
             <Text
               variant={TextVariant.SECONDARY}
@@ -191,7 +268,7 @@ export const AboutSection = ({ className }: { className?: string }) => {
               as="p"
               fontWeight={TextFontWeight.XL}
             >
-              – GUILLERMO DEL TORO
+              – STANLEY KUBRICK
             </Text>
           </div>
         </div>

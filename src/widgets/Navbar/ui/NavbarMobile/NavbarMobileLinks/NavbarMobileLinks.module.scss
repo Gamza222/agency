@@ -7,28 +7,46 @@
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
+
+// dark gold
+  z-index: 9999; // Below navbar (10000) but above everything else
+
+  overflow-y: auto;
+  background: #dddee2;
+
+  // Animation: slide from top with cubic-bezier (slow start, fast end)
+  animation: slideDown 0.8s cubic-bezier(0.14, 1, 0.34, 1) forwards;
+  // transform-origin: top;
+}
+
+.NavbarWrapper {
+  // transform-origin: top;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: var(--green-color); // dark gold
-  z-index: 9999; // Below navbar (10000) but above everything else
+  background-color: red; 
+  animation-delay: 0.1;
+  animation: slideDownWrapper 0.8s cubic-bezier(0.14, 1, 0.34, 1) forwards;
+  height: 100%;
   padding-top: calc(
     var(--logo-height, 20px) * 1.2 + var(--padding-mobile-top, 7px) * 2 + 10px
   );
   padding-bottom: 20px;
   padding-left: var(--padding-mobile-side, 7px);
   padding-right: var(--padding-mobile-side, 7px);
-  overflow-y: auto;
-
-  // Animation: slide from top with cubic-bezier (slow start, fast end)
-  animation: slideDown 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform-origin: top;
 }
 
 .navbarMobileLinks_closing {
   // Override opening animation with closing animation
-  animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUp 0.8s cubic-bezier(.9, 0, .1, 1) forwards;
+
+  .NavbarWrapper {
+    animation-delay: 0.1;
+  animation: slideUpWrapper 0.8s cubic-bezier(.9, 0, .1, 1) forwards;
+
+  }
 }
 
 .navbarMobileLinks__nav {
@@ -174,11 +192,18 @@ body[data-is-loading="true"] .navbarMobileLinks__linkWrapper_active {
 
 @keyframes slideDown {
   0% {
-    transform: translateY(-100%);
+    transform: translate(20%, -120%) rotate(8deg);
   }
   100% {
     transform: translateY(0);
-    opacity: 1;
+  }
+}
+@keyframes slideDownWrapper {
+  0% {
+    transform: translate(30%, -80%) rotate(14deg);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
@@ -188,8 +213,16 @@ body[data-is-loading="true"] .navbarMobileLinks__linkWrapper_active {
     opacity: 1;
   }
   100% {
-    transform: translateY(-100%);
-    opacity: 0;
+    transform: translate(20%, -120%) rotate(8deg);
+  }
+}
+@keyframes slideUpWrapper {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(30%, -80%) rotate(14deg);
   }
 }
 
@@ -201,4 +234,19 @@ body[data-is-loading="true"] .navbarMobileLinks__linkWrapper_active {
 
 .navbarMobileLinks__bottomText {
   text-transform: uppercase;
+}
+
+.navbarMobileLinks__bottomLink {
+  > p {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.6rem, 1vw, 100rem);
+
+  }
+}
+
+.iconTg {
+  fill: var(--color-white);
+  height: var(--font-size-3xl);
+  transform: translateY(-0.02em);
 }

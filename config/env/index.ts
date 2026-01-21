@@ -14,17 +14,17 @@
 // ============================================================================
 
 // Environment configuration (most used)
-export { envConfig, validateEnvironment } from './config';
+export { envConfig, validateEnvironment } from './config.ts';
 export {
   isDevelopment,
   isProduction,
   isTest,
   isPreview,
   getCurrentEnvironment,
-} from './validation';
+} from './validation.ts';
 
 // Environment variable access
-import { getEnv } from './env-utils';
+import { getEnv } from './env-utils.ts';
 
 export const getEnvVariable = (key: string, defaultValue?: string): string => {
   const value = getEnv(key);
@@ -38,21 +38,20 @@ export const getEnvVariable = (key: string, defaultValue?: string): string => {
 // TYPE EXPORTS - For TypeScript usage
 // ============================================================================
 
-export type { CompleteEnvConfig, EnvConfig, EnvValidationResult } from './types';
-export { Environment } from './types';
+export type { CompleteEnvConfig, EnvConfig, EnvValidationResult } from './types.ts';
+export { Environment } from './types.ts';
 
 // ============================================================================
 // ADVANCED EXPORTS - For advanced usage
 // ============================================================================
 
 // Validation functions
-export { validateEnvironmentVariables, validateEnvVariable } from './validation';
+export { validateEnvironmentVariables, validateEnvVariable } from './validation.ts';
 
 // Constants (for advanced usage)
-export { ENV_DEFAULTS, ENV_OVERRIDES, REQUIRED_ENV_VARS, ENV_VALIDATION_RULES } from './constants';
+export { ENV_DEFAULTS, ENV_OVERRIDES, REQUIRED_ENV_VARS, ENV_VALIDATION_RULES } from './constants.ts';
 
 // ============================================================================
 // DEFAULT EXPORT - Main configuration instance
 // ============================================================================
 
-export { envConfig as default } from './config';

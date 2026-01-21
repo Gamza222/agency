@@ -5,16 +5,16 @@
  * Clean, focused configuration with better organization.
  */
 
-import { EnvConfig, Environment } from './types';
-import { ENV_DEFAULTS } from './constants';
+import { EnvConfig, Environment } from './types.ts';
+import { ENV_DEFAULTS } from './constants.ts';
 import {
   getCurrentEnvironment,
   isDevelopment,
   isPreview,
   isProduction,
   isTest,
-} from './validation';
-import { getEnv } from './env-utils';
+} from './validation.ts';
+import { getEnv } from './env-utils.ts';
 
 export class EnvironmentConfig implements EnvConfig {
   // Environment detection

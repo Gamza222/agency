@@ -1,0 +1,136 @@
+@use "base/base" as *;
+
+.Footer {
+  height: 100%;
+  background-color: blue;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  opacity: 0;
+}
+
+.FooterContent {
+  background: red;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  height: 100dvh;
+  position: relative;
+  font-size: var(--font-size-sm);
+  color: var(--color-white);
+  width: 100%;
+  z-index: 2;
+  font-weight: 500;
+}
+
+.FooterBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  gap: clamp(3rem, 3vw, 100rem);
+  padding-left: var(--padding-desktop-side);
+  padding-right: var(--padding-desktop-side);
+  padding-bottom: var(--padding-desktop-bottom);
+
+  @media screen and (max-width: $breakpoint-mobile) {
+    padding-left: var(--padding-mobile-side);
+    padding-right: var(--padding-mobile-side);
+    padding-bottom: var(--padding-mobile-bottom);
+  }
+
+  @media screen and (max-width: 750px) {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 1em;
+  }
+}
+
+.FooterBottom__right {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+
+  @media screen and (max-width: $breakpoint-mobile) {
+    font-size: 1rem;
+  }
+
+  @media screen and (max-width: 750px) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.1em;
+    column-gap: 2em;
+  }
+}
+
+.link {
+  text-decoration: none;
+  color: var(--color-white);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+
+  span:nth-child(2) {
+    @media (hover: hover) {
+      &:hover {
+        animation: fliker 0.32s linear forwards;
+      }
+    }
+  }
+}
+
+.link:nth-child(1) {
+  span:nth-child(1) {
+    display: none;
+
+    @media screen and (max-width: 750px) {
+      display: block;
+    }
+  }
+}
+
+.GlobeIcon {
+  position: absolute;
+  height: 100%;
+  width: auto;
+  bottom: 0;
+  right: 0;
+  opacity: 0.2;
+
+  @media (max-aspect-ratio: 1/1.1) {
+    left: 0;
+    right: auto;
+  }
+}
+
+@keyframes fliker {
+  0% {
+    opacity: 0;
+  }
+  19% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  39% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+  }
+  59% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}

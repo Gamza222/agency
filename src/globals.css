@@ -5,7 +5,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 :root {
   /* Original font sizes - scale normally until 1200px */
@@ -14,12 +14,12 @@
   --font-size-md: clamp(0.95rem, 1.25vw, 100rem); /* 14px - 16px */
   --font-size-lg: 1.3rem; /* 16px - 18px */
   --font-size-xl: 1.6rem; /* 18px - 20px */
-  --font-size-2xl: 1.8rem; /* 24px - 28px */
-  --font-size-3xl: clamp(1.75rem, 1.6rem + 0.75vw, 2rem); /* 28px - 32px */
-  --font-size-4xl: clamp(2rem, 1.8rem + 1vw, 2.5rem); /* 32px - 40px */
+  --font-size-2xl: 1.6rem; /* 24px - 28px */
+  --font-size-3xl: 1.7rem; /* 28px - 32px */
+  --font-size-4xl: 1.5rem; /* 32px - 40px */
   --font-size-5xl: clamp(2.5rem, 2.2rem + 2vw, 3.8rem); /* 40px - 48px */
-  --font-size-6xl: clamp(3.7rem, 12vw, 100rem); /* 48px - 64px */
-  --font-size-percentage: clamp(3rem, 12vw, 100rem); /* 12px - 14px */
+  --font-size-6xl: 12vw; /* 48px - 64px */
+  --font-size-percentage: clamp(3rem, 8vw, 100rem); /* 12px - 14px */
 
   /* colors */
   --color-white: #f8f8f8;
@@ -29,12 +29,12 @@
   --gray-color: #dedfe3f2;
 
   /* Navbar styling variables */
-  --logo-height: 20px;
+  --logo-height: 1.2rem;
   --padding-desktop-side: clamp(10px, 1vw, 100rem);
-  --padding-desktop-top: 0.5vh;
+  --padding-desktop-top: 0.46vw;
   --padding-mobile-side: clamp(8px, 1vw, 100rem);
-  --padding-mobile-top: 0.4vh;
-  --padding-section-top: 1vh;
+  --padding-mobile-top: 0.8rem;
+  --padding-section-top: 1dvh;
 
   /* Breakpoints */
   --breakpoint-mobile: 1020px;
@@ -46,28 +46,35 @@ body {
   /* clip instead of hidden: prevents horizontal scroll on mobile without
      creating a new scroll container (which breaks position:fixed and transforms) */
   overflow-x: clip;
-  overscroll-behavior: none;
   /* Ensure body and html don't interfere with ScrollSmoother */
   height: 100%;
+  min-width: 280px;
+}
+
+#smooth-wrapper {
+  min-width: 280px;
 }
 
 html {
   /* Remove smooth scroll since ScrollSmoother handles it */
   scroll-behavior: auto;
+  background: red;
+  height: 100dvh;
 }
 
 /* ScrollSmoother wrapper styles */
 /* These are required for ScrollSmoother to work correctly */
 #smooth-wrapper {
-  overflow: hidden;
-  position: relative;
   width: 100%;
-  height: 100vh;
   /* Prevent any interference with positioning */
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  position: relative;
+  top: 0;
+  left: 0;
 }
-
 #smooth-content {
   overflow: visible;
   width: 100%;
@@ -77,17 +84,39 @@ html {
   min-height: 100%;
 }
 
+#red {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 101dvh;
+  background-color: red;
+  z-index: -999;
+}
+
 body {
   font-family: sans-serif;
   line-height: 1.5;
   color: #1f2937;
-  background-color: #ffffff;
+  background-color: var(--color-white);
+  isolation: isolate; 
+
+  /* background-color: #ff391e */
+  /* background-color: black */
 }
 
-/* Dark theme support */
-[data-theme="dark"] body {
-  color: #f9fafb;
-  background-color: #111827;
+
+/* Text selection styling */
+::selection {
+  background-color: red;
+  color: #f8f8f8;
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background-color: red;
+  color: #f8f8f8;
+  text-shadow: none;
 }
 
 /* Basic typography */
@@ -186,25 +215,34 @@ a:hover {
 }
 
 .app {
-  padding-top: calc(var(--logo-height) + var(--padding-desktop-top) * 2 + 10px);
+  /* padding-top: calc(var(--logo-height) + var(--padding-desktop-top) * 2 + 10px); */
   /* padding-bottom: 10px; */
-  background-color: green;
+  /* background-color: var(--color-white); */
+  /* background: var(--color-white); */
+  /* background:#ff391e; */
   /* padding-left: var(--padding-desktop-side);
   padding-right: var(--padding-desktop-side); */
+  /* background-color: red; */
 }
 
 /* Using --breakpoint-mobile: 1020px (defined above) */
-@media (max-width: 1020px) {
-  .app {
-    padding-top: calc(
-      var(--logo-height) * 1.2 + var(--padding-mobile-top) * 2 + 10px
-    );
-    padding-bottom: 10px;
-    /* padding-left: var(--padding-mobile-side); */
-    /* padding-right: var(--padding-mobile-side); */
+
+@media (max-width: 500px) {
+  :root {
+    --font-size-6xl: 3.7rem; /* 48px at 1200px, ~160px at 4000px */
   }
 }
 
+@media (min-width: 550px) {
+  :root {
+    --font-size-4xl: 2rem; /* 40px at 1200px, ~133px at 4000px */
+  }
+}
+@media (min-width: 750px) {
+  :root {
+    --font-size-4xl: 2.2rem; /* 40px at 1200px, ~133px at 4000px */
+  }
+}
 /* Large screens: vw-based scaling from 1200px onwards */
 @media (min-width: 1020px) {
   :root {
@@ -212,17 +250,17 @@ a:hover {
     /* At 1200px: 1vw = 12px, so values are calculated to match current sizes */
     /* These scale continuously as viewport grows (e.g., at 4000px: 1vw = 40px) */
     --font-size-sm: 1.3vw; /* 14px at 1200px, ~47px at 4000px */
-    --font-size-base: 0.9vw; /* 16px at 1200px, ~53px at 4000px */
+    --font-size-base: 1vw; /* 16px at 1200px, ~53px at 4000px */
     /* font-size-lg: scales from 18px at 1200px to 35px at 4000px */
     /* Formula: 0.67rem + 0.0379vw gives 1.125rem at 12vw and 2.1875rem at 40vw */
     --font-size-lg: 1.63vw;
     --font-size-xl: 1.827vw; /* 20px at 1200px, ~67px at 4000px */
-    --font-size-2xl: 2.333vw; /* 28px at 1200px, ~93px at 4000px */
-    --font-size-3xl: 2.667vw; /* 32px at 1200px, ~107px at 4000px */
-    --font-size-4xl: 3.333vw; /* 40px at 1200px, ~133px at 4000px */
+    --font-size-2xl: 2.833vw; /* 28px at 1200px, ~93px at 4000px */
+    --font-size-3xl: 3.3vw; /* 32px at 1200px, ~107px at 4000px */
+    --font-size-4xl: 3.3vw; /* 40px at 1200px, ~133px at 4000px */
     --font-size-5xl: 4vw; /* 48px at 1200px, ~160px at 4000px */
-
-    --logo-height: 1.4vw;
+    --font-size-6xl: 12vw; /* 48px at 1200px, ~160px at 4000px */
+    --logo-height: 1.6vw;
   }
 }
 

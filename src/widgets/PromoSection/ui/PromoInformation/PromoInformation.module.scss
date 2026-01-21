@@ -1,0 +1,43 @@
+@use "base/base" as *;
+
+.PromoInformationContent__text {
+}
+
+.PromoInformation {
+  padding-left: clamp(0.2rem, 1.8vw, 100rem);
+  padding-right: var(--padding-desktop-side);
+  padding-top: clamp(1.5rem, 4vw, 100rem);
+  padding-bottom: clamp(1.5rem, 4vw, 100rem);
+
+  @media (max-width: $breakpoint-mobile) {
+    // padding-left: var(--padding-mobile-side);
+    padding-right: var(--padding-mobile-side);
+  }
+}
+
+.PromoInformationTitle {
+  padding-bottom: clamp(0.5rem, 0.7vw, 100rem);
+}
+
+.PromoInformationContent {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 3vw, 100rem);
+}
+.PromoInformationContent__text {
+  font-weight: 470;
+  line-height: 1;
+  span {
+    position: relative;
+    // background-color: #ff391e;
+    // &::after {
+    //   content: "";
+    //   position: absolute;
+    //   bottom: 0;
+    //   left: 0;
+    //   width: 100%;
+    //   height: 100%;
+    //   background-color: #ff391e;
+    // }
+  }
+}

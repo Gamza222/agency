@@ -65,7 +65,7 @@ function MockedMonitoringDashboard() {
         padding: '20px',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         backgroundColor: '#f8fafc',
-        minHeight: '100vh',
+        minHeight: '100dvh',
       }}
     >
       <div

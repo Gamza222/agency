@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { LoadingScreen, LoadingScreenMode } from "@/widgets/LoadingScreen";
 
 export default function ContactPage() {
@@ -30,5 +30,6 @@ export default function ContactPage() {
     </main>
   );
 }
+
 
 

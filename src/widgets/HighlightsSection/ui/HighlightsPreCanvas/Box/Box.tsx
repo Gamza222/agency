@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import styles from "./Box.module.scss";
 import { Text, TextSize, TextVariant } from "@/shared/ui/Text";
 import { TextFontWeight } from "@/shared/ui/Text/Text.types";

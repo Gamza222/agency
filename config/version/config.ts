@@ -5,8 +5,8 @@
  * Clean, focused version configuration.
  */
 
-import { VersionConfig, VersionHistory, VersionInfo } from './types';
-import { getCurrentVersion } from './utils';
+import { VersionConfig, VersionHistory, VersionInfo } from './types.ts';
+import { getCurrentVersion } from './utils.ts';
 
 export class VersionConfigClass implements VersionConfig {
   public readonly currentVersion: VersionInfo;

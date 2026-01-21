@@ -41,7 +41,7 @@
   border: none;
   cursor: pointer;
   opacity: 0;
-  animation: hamburger-flicker var(--hamburger-flicker-duration, 0.17s) 2
+  animation: hamburger-flicker var(--hamburger-flicker-duration, 0.17s) linear
     forwards;
   animation-delay: var(--hamburger-delay, 0.2s);
 
@@ -61,11 +61,16 @@
 .navbar__hamburgerLine {
   width: 50px;
   height: 4px;
-  background-color: var(--color-white);
+  background-color: var(--color-black);
   position: relative;
+  transition: background-color 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 
   // Each line flickers 3 times when clicked (cascading)
   --flicker-duration: 0.08s; // Very fast
+}
+
+.navbar__hamburgerLine_lightBackground {
+  background-color: var(--color-white);
 }
 
 // When hamburger opens - complex flicker sequence
@@ -79,8 +84,8 @@
   }
 }
 
-// When hamburger closes - reverse of opening flow
-.navbar__hamburger:not(.navbar__hamburger_open) {
+// When hamburger closes - reverse of opening flow (only after it's been opened once)
+.navbar__hamburger_hasBeenOpened:not(.navbar__hamburger_open) {
   .navbar__hamburgerLine:nth-child(1) {
     animation: close-line-1 0.7s linear forwards;
   }
@@ -94,6 +99,12 @@
   0% {
     opacity: 0;
   }
+  1%{
+    opacity: 1;
+  }
+  49%{opacity: 1;}
+  50%{opacity: 0;}
+  99%{opacity: 0;}
   100% {
     opacity: 1;
   }

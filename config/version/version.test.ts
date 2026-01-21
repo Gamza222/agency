@@ -11,7 +11,7 @@ import {
   getVersionDisplay,
   isPrerelease,
   parseVersion,
-} from './index';
+} from './index.ts';
 
 // Mock package.json
 jest.mock('fs', () => ({

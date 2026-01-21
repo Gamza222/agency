@@ -9,7 +9,7 @@
 
 .photosContainer__photo {
   min-height: 400px;
-  min-width: 260px;
+  min-width: 266px;
   width: 32vw;
   height: 48vw;
   overflow: hidden;
@@ -49,6 +49,9 @@
     width: 80vw;
     height: 120vw;
     // max-width: 600px;
-    max-height: 480px;
+    max-height: 510px;
+    max-width: 340px;
+    // min-width: 360px;
+    // min-height: 540px;
   }
 }

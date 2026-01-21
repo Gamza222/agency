@@ -1,7 +1,6 @@
 "use client";
 
 import React, { memo } from "react";
-import { useLocation } from "react-router-dom";
 import { classNames } from "@/shared/lib/utils/classNames/classNames";
 import type { NavbarProps } from "../../types/types";
 import {
@@ -12,12 +11,14 @@ import {
 import NavbarBrand from "../NavbarBrand/NavbarBrand";
 import styles from "./NavbarDesktop.module.scss";
 import { Text, TextSize, TextVariant } from "@/shared/ui/Text";
-import { Link } from "react-router-dom";
+import { useActiveSection } from "../../lib/useActiveSection";
+import { useIsOnLightBackground } from "../../lib/useIsOnLightBackground";
+import { TextFontWeight } from "@/shared/ui/Text/Text.types";
 
 const NavbarDesktop = memo((props: NavbarProps) => {
   const { className, disabled = false } = props;
-  const location = useLocation();
-  const pathname = location.pathname;
+  const activeSection = useActiveSection();
+  const isOnLightBackground = useIsOnLightBackground();
 
   const style = {
     "--brand-fade-duration": `${NAVBAR_ANIMATION.BRAND_FADE_DURATION}s`,
@@ -31,11 +32,20 @@ const NavbarDesktop = memo((props: NavbarProps) => {
 
   return (
     <nav
-      className={classNames(styles.navbarDesktop, {}, [className])}
+      className={classNames(
+        styles.navbarDesktop,
+        {
+          [styles.navbarDesktop_lightBackground]: isOnLightBackground,
+        },
+        [className]
+      )}
       style={style}
     >
       <div className={styles.navbar__container}>
-        <NavbarBrand brandText={NAVBAR_STYLING.BRAND_TEXT} />
+        <NavbarBrand
+          brandText={NAVBAR_STYLING.BRAND_TEXT}
+          isOnLightBackground={isOnLightBackground}
+        />
 
         {/* Center: Nav Links with Dividers */}
         <div className={styles.navbar__nav}>
@@ -43,7 +53,10 @@ const NavbarDesktop = memo((props: NavbarProps) => {
             <React.Fragment key={link.href}>
               {index > 0 && (
                 <span
-                  className={styles.navbar__divider}
+                  className={classNames(styles.navbar__divider, {
+                    [styles.navbar__divider_lightBackground]:
+                      isOnLightBackground,
+                  })}
                   style={
                     {
                       "--divider-index": index - 1,
@@ -53,11 +66,11 @@ const NavbarDesktop = memo((props: NavbarProps) => {
                   /
                 </span>
               )}
-              <Link
+              <a
                 href={link.href}
                 className={classNames(styles.navbar__link, {
-                  [styles.navbar__link_active as string]:
-                    pathname === link.href,
+                  [styles.navbar__link_active]:
+                    activeSection === link.href,
                 })}
                 style={
                   {
@@ -69,12 +82,16 @@ const NavbarDesktop = memo((props: NavbarProps) => {
                 <Text
                   as="span"
                   variant={TextVariant.PRIMARY}
-                  size={TextSize.MD}
-                  className={styles.navbar__linkText}
+                  size={TextSize.SM}
+                  fontWeight={TextFontWeight.XL}
+                  className={classNames(styles.navbar__linkText, {
+                    [styles.navbar__linkText_lightBackground]:
+                      isOnLightBackground,
+                  })}
                 >
                   {link.label}
                 </Text>
-              </Link>
+              </a>
             </React.Fragment>
           ))}
         </div>

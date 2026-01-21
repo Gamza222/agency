@@ -15,9 +15,12 @@
   // width: var(--logo-height, 25px);
   height: var(--logo-height, 25px);
   display: block;
-  > path {
-    fill: var(--color-white);
-  }
+  fill: var(--color-black);
+  transition: fill 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.navbar__logo_lightBackground {
+  fill: var(--color-white);
 }
 
 .navbar__brandText {

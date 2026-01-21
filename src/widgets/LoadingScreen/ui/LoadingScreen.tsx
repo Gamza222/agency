@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState, useEffect } from "react";
 import { classNames, Mods } from "@/shared/lib/utils/classNames/classNames";
 import WarpLogo from "@/shared/assets/icons/logo-bg-01.svg?react";
 import { LoadingScreenMode } from "../types/types";
@@ -16,6 +16,7 @@ import { usePercentageAnimation } from "../lib/hooks/usePercentageAnimation";
 import { useAnimationEndHandlers } from "../lib/hooks/useAnimationEndHandlers";
 import styles from "./LoadingScreen.module.scss";
 import { Text, TextSize, TextVariant } from "@/shared/ui/Text";
+import { TextFontWeight } from "@/shared/ui/Text/Text.types";
 
 const LoadingScreen = memo((props: LoadingScreenProps) => {
   const {
@@ -28,11 +29,13 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
     animationsComplete = false,
     mode = LoadingScreenMode.DEFAULT,
     scrollProgress: _scrollProgress = 0, // Prefixed with _ to indicate intentionally unused
+    externalContainerRef,
   } = props;
 
   const navbarMounted = useNavbarMountCheck();
   const [loadingBarComplete, setLoadingBarComplete] = useState(false);
   const [percentageGoalComplete, setPercentageGoalComplete] = useState(false);
+  const [svgKey, setSvgKey] = useState(0);
 
   const handlePercentageGoalComplete = useCallback(() => {
     setPercentageGoalComplete(true);
@@ -52,7 +55,30 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
       onAnimationComplete,
       percentageHideAnimationName: styles.percentageHide || "",
       slideOutRotateAnimationName: styles.slideOutRotate || "",
+      externalContainerRef, // Pass external ref directly
     });
+
+  // Force SVG re-mount on resize to prevent blur
+  // Runs AFTER ScrollSmootherProvider's resize handler (200ms debounce)
+  useEffect(() => {
+    let resizeTimer: ReturnType<typeof setTimeout>;
+
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      // Use 250ms debounce to run AFTER ScrollSmootherProvider's 200ms handler
+      resizeTimer = setTimeout(() => {
+        // Force re-mount by changing key
+        setSvgKey((prev) => prev + 1);
+      }, 250);
+    };
+
+    window.addEventListener("resize", handleResize, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
+    };
+  }, []);
 
   // Memoized CSS animation timing variables
   const animationStyle = useMemo(
@@ -69,24 +95,24 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
   // Memoized CSS class modifiers
   const loadingBarMods: Mods = useMemo(
     () => ({
-      [styles.loadingScreen__loadingBarStart as string]: navbarMounted,
-      [styles.loadingScreen__loadingBarHidden as string]: loadingBarComplete,
+      [styles.loadingScreen__loadingBarStart]: navbarMounted,
+      [styles.loadingScreen__loadingBarHidden]: loadingBarComplete,
     }),
     [navbarMounted, loadingBarComplete]
   );
 
   const strokeMods: Mods = useMemo(
     () => ({
-      [styles.loadingScreen__logoStrokeHidden as string]: !loadingBarComplete,
-      [styles.loadingScreen__logoStrokeAnimate as string]: loadingBarComplete,
+      [styles.loadingScreen__logoStrokeHidden]: !loadingBarComplete,
+      [styles.loadingScreen__logoStrokeAnimate]: loadingBarComplete,
     }),
     [loadingBarComplete]
   );
 
   const percentageMods: Mods = useMemo(
     () => ({
-      [styles.loadingScreen__percentageStart as string]: navbarMounted,
-      [styles.loadingScreen__percentageHidden as string]: percentageComplete,
+      [styles.loadingScreen__percentageStart]: navbarMounted,
+      [styles.loadingScreen__percentageHidden]: percentageComplete,
     }),
     [navbarMounted, percentageComplete]
   );
@@ -107,9 +133,9 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
 
   const containerMods: Mods = useMemo(
     () => ({
-      [styles.loadingScreen_homepage as string]: isHomepage,
-      [styles.loadingScreen_scrollAnimated as string]: isScrollAnimated,
-      [styles.loadingScreen_exitAnimation as string]:
+      [styles.loadingScreen_homepage]: isHomepage,
+      [styles.loadingScreen_scrollAnimated]: isScrollAnimated,
+      [styles.loadingScreen_exitAnimation]:
         exitAnimationStarted && !isHomepage,
     }),
     [isHomepage, isScrollAnimated, exitAnimationStarted]
@@ -145,16 +171,16 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
         >
           <Text
             className={styles.loadingScreen__percentageProgress}
-            variant={TextVariant.PRIMARY}
             size={TextSize.PERCENTAGE}
+            fontWeight={TextFontWeight.XL2}
             as="p"
           >
             <span ref={progressRef}>0</span>
           </Text>
           <Text
             className={styles.loadingScreen__percentageSpan}
-            variant={TextVariant.PRIMARY}
             size={TextSize.PERCENTAGE}
+            fontWeight={TextFontWeight.XL2}
             as="span"
           >
             /
@@ -163,6 +189,7 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
             className={styles.loadingScreen__percentageGoal}
             variant={TextVariant.PRIMARY}
             size={TextSize.PERCENTAGE}
+            fontWeight={TextFontWeight.XL2}
             as="p"
             onAnimationEnd={handlePercentageGoalComplete}
           >
@@ -182,7 +209,7 @@ const LoadingScreen = memo((props: LoadingScreenProps) => {
           <div
             className={classNames(styles.loadingScreen__logoStroke, strokeMods)}
           >
-            <WarpLogo />
+            <WarpLogo key={svgKey} />
           </div>
         </div>
       </div>

@@ -39,12 +39,19 @@
     var(--brand-fade-duration, 0.3s) + var(--divider-delay, 0.1s) *
       var(--divider-index)
   );
-  color: var(--color-white);
-  font-size: calc(var(--font-size-base));
+  color: var(--color-black);
+  font-size: calc(var(--font-size-sm));
+  transform: translateY(-0.01em);
   font-weight: 100;
   padding: 0;
   margin: 0 calc(var(--font-size-lg) * 0.4); // 2-3px gap between divider and link
-  transition: margin 0.3s ease; // Smooth adjustment when circle moves
+  transition:
+    margin 0.3s ease,
+    color 0.6s cubic-bezier(0.19, 1, 0.22, 1); // Smooth adjustment when circle moves and color transition
+}
+
+.navbar__divider_lightBackground {
+  color: var(--color-white);
 }
 
 @keyframes divider-fade-in {
@@ -66,8 +73,9 @@
   gap: 0; // No gap - circle and text are close
   opacity: 0; // Start hidden for loading animation
   text-decoration: none !important;
-  font-size: calc(var(--font-size-lg) - 3px);
+  font-size: var(--font-size-xl);
   text-transform: uppercase;
+  cursor: pointer;
   letter-spacing: 0.5px;
   padding: 4px 0; // No horizontal padding - links are close
   line-height: 1; // Prevent extra height from inherited line-height
@@ -106,6 +114,12 @@
   line-height: 1; // Ensure no extra height from line-height
   margin: 0; // Remove any default margins
   padding: 0; // Remove any default padding
+  color: var(--color-black);
+  transition: color 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.navbar__linkText_lightBackground {
+  color: var(--color-white);
 }
 
 // Loading animation - runs on link element (controls entire link visibility)
@@ -129,9 +143,10 @@
 
 .navbar__linkIndicator {
   width: 0; // Inactive: no space taken
-  height: calc(var(--font-size-lg) - 4px);
+  height: calc(var(--font-size-sm) - 0.04em);
+  transform: translateY(-0.05em);
   border-radius: 50%;
-  background-color: var(--green-color, #5eeb5b);
+  // background-color: var(--green-color, #5eeb5b);
   background-color: red;
 
   opacity: 0;
@@ -154,7 +169,7 @@ body[data-is-loading="true"] .navbar__link_active .navbar__linkIndicator {
 .navbar__link_active .navbar__linkIndicator,
 .navbar__link_active .navbar__linkText {
   color: var(--green-color, #5eeb5b);
-  color: red;
+  color: red !important; // Override white loading rule - always red when active
   transition: color 0.3s ease;
 }
 
@@ -173,8 +188,9 @@ body[data-is-loading="true"] .navbar__link_active .navbar__linkText {
 
 .navbar__link_active .navbar__linkIndicator {
   opacity: 1;
-  width: calc(var(--font-size-lg) - 4px); // Active: takes space (8px)
+  width: calc(var(--font-size-sm) - 0.04em); // Active: takes space (8px)
   margin-right: 6px; // 2-3px gap between circle and text
+  background-color: red !important; // Override white loading rule - always red when active
 }
 
 // Active link flicker - runs on text element (2 flicks when link becomes active)

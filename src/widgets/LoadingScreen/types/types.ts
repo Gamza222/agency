@@ -26,4 +26,6 @@ export interface LoadingScreenProps {
   mode?: LoadingScreenMode;
   /** Scroll progress (0-1) for HOMEPAGE mode exit transform */
   scrollProgress?: number;
+  /** External ref for container (used in HOMEPAGE mode for GSAP animations) */
+  externalContainerRef?: React.Ref<HTMLDivElement>;
 }

@@ -71,6 +71,7 @@
   }
 
   > svg {
+    height: calc(var(--font-size-base) * 0.65);
     width: calc(var(--font-size-base) * 0.65);
     transform: translateY(calc(var(--font-size-base) * 0.11));
   }

@@ -8,15 +8,12 @@ import { HighlightsInfo } from "./HighlightsInfo/HighlightsInfo";
 import { HighlightsPreCanvas } from "./HighlightsPreCanvas/HighlightsPreCanvas";
 import { HighlightProject } from "./HighlightProject/HighlightProject";
 import styles from "./HighlightsSection.module.scss";
+import video1 from "@/shared/assets/icons/video-test.mp4";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const HighlightsSection = ({ className }: { className?: string }) => {
   const sectionRef = useRef<HTMLElement>(null);
-  // Cache height in ref - functions will read from this to avoid excessive window.innerHeight calls
-  const heightRef = useRef(
-    typeof window !== "undefined" ? window.innerHeight : 0
-  );
   // Store GSAP context in a ref for cleanup
   const ctxRef = useRef<gsap.Context | null>(null);
 
@@ -47,6 +44,7 @@ export const HighlightsSection = ({ className }: { className?: string }) => {
         color: "red",
         title: "BRAND NAME / CREATIVE CAMPAIGN",
         href: "/works/project-1",
+        video: video1,
       },
       {
         setRef: set2Ref,
@@ -56,6 +54,7 @@ export const HighlightsSection = ({ className }: { className?: string }) => {
         color: "blue",
         title: "Armyane",
         href: "/works/project-2",
+        video: video1,
       },
       {
         setRef: set3Ref,
@@ -65,6 +64,7 @@ export const HighlightsSection = ({ className }: { className?: string }) => {
         color: "red",
         title: "Makan RomanProject",
         href: "/works/project-3",
+        video: video1,
       },
     ],
     []
@@ -75,291 +75,8 @@ export const HighlightsSection = ({ className }: { className?: string }) => {
   useLayoutEffect(() => {
     if (!sectionRef.current || !window) return;
 
-    const effectStartTime = performance.now();
-
-    // Initialize height ref
-    heightRef.current = window.innerHeight;
-
-    // #region agent log - HighlightsSection effect start
-    fetch("http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        location: "HighlightsSection.tsx:useLayoutEffect-start",
-        message: "useLayoutEffect start",
-        data: {
-          windowInnerHeight: heightRef.current,
-          setsCount: sets.length,
-          scrollTriggerCount: ScrollTrigger.getAll().length,
-        },
-        timestamp: Date.now(),
-        sessionId: "debug-session",
-        runId: "fps-optimization-v4",
-        hypothesisId: "FPS",
-      }),
-    }).catch(() => {});
-    // #endregion
-
-    // Update cached height on resize (debounced for 60 FPS optimization)
-    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
-    let lastHeight = window.innerHeight;
-    const debouncedUpdateHeight = () => {
-      if (resizeTimeout) clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        const newHeight = window.innerHeight;
-        // Only update if height changed significantly (50px threshold for 60 FPS)
-        if (Math.abs(newHeight - lastHeight) < 50) {
-          return;
-        }
-        lastHeight = newHeight;
-        if (newHeight !== heightRef.current) {
-          heightRef.current = newHeight;
-          // #region agent log - height updated
-          fetch(
-            "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                location: "HighlightsSection.tsx:78",
-                message: "Height updated",
-                data: { height: newHeight },
-                timestamp: Date.now(),
-                sessionId: "debug-session",
-                runId: "post-fix-v3",
-                hypothesisId: "C",
-              }),
-            }
-          ).catch(() => {});
-          // #endregion
-          // Use requestAnimationFrame to batch ScrollTrigger refresh for 60 FPS
-          requestAnimationFrame(() => {
-            const refreshStart = performance.now();
-            ScrollTrigger.refresh();
-            const refreshTime = performance.now() - refreshStart;
-
-            // #region agent log - HighlightsSection ScrollTrigger refresh
-            if (refreshTime > 10) {
-              // Only log if refresh takes > 10ms
-              fetch(
-                "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-                {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    location: "HighlightsSection.tsx:refresh",
-                    message: "ScrollTrigger refresh (slow)",
-                    data: {
-                      refreshTime: Math.round(refreshTime * 100) / 100,
-                      windowHeight: newHeight,
-                      scrollTriggerCount: ScrollTrigger.getAll().length,
-                    },
-                    timestamp: Date.now(),
-                    sessionId: "debug-session",
-                    runId: "fps-optimization-v4",
-                    hypothesisId: "FPS",
-                  }),
-                }
-              ).catch(() => {});
-            }
-            // #endregion
-          });
-        }
-      }, 500); // Increased debounce to 500ms for 60 FPS optimization
-    };
-
-    // Track last activity time to detect idle periods
-    let lastActivityTime = performance.now();
-    let isIdleSimulated = false;
-
-    // Update lastActivityTime on user interactions to track real idle periods
-    const updateActivityTime = () => {
-      lastActivityTime = performance.now();
-    };
-    // Track scroll, mousemove, and resize events as activity
-    window.addEventListener("scroll", updateActivityTime, { passive: true });
-    window.addEventListener("mousemove", updateActivityTime, { passive: true });
-    window.addEventListener("resize", updateActivityTime, { passive: true });
-
-    // Simulate idle condition for testing (dev mode only)
-    if (process.env.NODE_ENV === "development") {
-      // Add global function to simulate idle state
-      (window as any).__simulateIdle = () => {
-        isIdleSimulated = true;
-        lastActivityTime = performance.now() - 300000; // Simulate 5 minutes idle
-        // #region agent log - idle simulation
-        fetch(
-          "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              location: "HighlightsSection.tsx:simulateIdle",
-              message: "Idle state simulated for testing",
-              data: {
-                simulatedIdleTime: 300000,
-                currentTime: performance.now(),
-                lastActivityTime,
-              },
-              timestamp: Date.now(),
-              sessionId: "debug-session",
-              runId: "idle-fix-test",
-              hypothesisId: "IDLE",
-            }),
-          }
-        ).catch(() => {});
-        // #endregion
-        console.log("Idle state simulated. Try resizing now to test the fix.");
-      };
-    }
-
-    // Enhanced resize handler that detects idle periods
-    // Optimized for 60 FPS: only check idle on significant time gaps
-    const enhancedResizeHandler = () => {
-      // Fast path: if not simulated idle and recent activity, skip idle check
-      if (!isIdleSimulated) {
-        const timeSinceLastActivity = performance.now() - lastActivityTime;
-        // Only check for idle if it's been more than 30 seconds (optimization)
-        if (timeSinceLastActivity < 30000) {
-          lastActivityTime = performance.now();
-          debouncedUpdateHeight();
-          return;
-        }
-      }
-
-      // Slow path: idle detected - handle immediately
-      const timeSinceLastActivity = performance.now() - lastActivityTime;
-      const isIdle = timeSinceLastActivity > 60000 || isIdleSimulated;
-
-      // #region agent log - resize after idle detection
-      // Defer logging to avoid blocking resize handler (60 FPS optimization)
-      if (isIdle) {
-        requestAnimationFrame(() => {
-          fetch(
-            "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                location: "HighlightsSection.tsx:resize-after-idle",
-                message: "Resize detected after idle period",
-                data: {
-                  timeSinceLastActivity: Math.round(timeSinceLastActivity),
-                  isIdleSimulated,
-                  windowHeight: window.innerHeight,
-                  cachedHeight: heightRef.current,
-                  scrollTriggerCount: ScrollTrigger.getAll().length,
-                },
-                timestamp: Date.now(),
-                sessionId: "debug-session",
-                runId: "idle-fix-test",
-                hypothesisId: "IDLE",
-              }),
-            }
-          ).catch(() => {});
-        });
-      }
-      // #endregion
-
-      lastActivityTime = performance.now();
-      isIdleSimulated = false; // Reset after first resize
-
-      // If idle, force immediate refresh without debounce
-      if (isIdle) {
-        const newHeight = window.innerHeight;
-        // Update height immediately - this is critical for function callbacks
-        heightRef.current = newHeight;
-
-        // Force immediate ScrollTrigger refresh after idle
-        // Single RAF is sufficient - height is already updated synchronously
-        requestAnimationFrame(() => {
-          // Verify height is still correct before refresh (window might have changed again)
-          const currentHeight = window.innerHeight;
-          if (currentHeight !== heightRef.current) {
-            heightRef.current = currentHeight;
-          }
-
-          // #region agent log - forced refresh after idle
-          fetch(
-            "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                location: "HighlightsSection.tsx:forced-refresh-after-idle",
-                message: "Forced ScrollTrigger refresh after idle",
-                data: {
-                  windowHeight: currentHeight,
-                  cachedHeight: heightRef.current,
-                  scrollTriggerCount: ScrollTrigger.getAll().length,
-                  heightsMatch: currentHeight === heightRef.current,
-                },
-                timestamp: Date.now(),
-                sessionId: "debug-session",
-                runId: "idle-fix-test",
-                hypothesisId: "IDLE",
-              }),
-            }
-          ).catch(() => {});
-          // #endregion
-
-          // Refresh ScrollTrigger - this will call getEndPin/getEndTimeline which read heightRef.current
-          ScrollTrigger.refresh();
-        });
-
-        // Don't call debouncedUpdateHeight if we're handling it immediately
-        return;
-      }
-
-      // Call normal debounced handler for non-idle resizes
-      debouncedUpdateHeight();
-    };
-
-    // Use enhanced resize handler instead of direct debounced handler
-    window.addEventListener("resize", enhancedResizeHandler);
-
-    // Handle visibility changes - force refresh when tab becomes visible after being hidden
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        // Tab became visible - check if we need to refresh
-        const timeSinceLastActivity = performance.now() - lastActivityTime;
-        if (timeSinceLastActivity > 10000) {
-          // Tab was hidden for more than 10 seconds
-          // #region agent log - visibility change
-          fetch(
-            "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                location: "HighlightsSection.tsx:visibility-change",
-                message: "Tab became visible after being hidden",
-                data: {
-                  timeSinceLastActivity: Math.round(timeSinceLastActivity),
-                  windowHeight: window.innerHeight,
-                  cachedHeight: heightRef.current,
-                },
-                timestamp: Date.now(),
-                sessionId: "debug-session",
-                runId: "idle-fix-test",
-                hypothesisId: "IDLE",
-              }),
-            }
-          ).catch(() => {});
-          // #endregion
-          // Update cached height and refresh ScrollTrigger
-          heightRef.current = window.innerHeight;
-          requestAnimationFrame(() => {
-            ScrollTrigger.refresh();
-          });
-        }
-        lastActivityTime = performance.now();
-      } else {
-        // Tab became hidden - record the time
-        lastActivityTime = performance.now();
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    // Resize handling is now done by ScrollSmootherProvider
+    // This reduces duplicate resize handlers and improves performance
 
     const ctx = gsap.context(() => {
       sets.forEach(({ setRef, canvasRef, projectRef, bgRef }, index) => {
@@ -369,71 +86,28 @@ export const HighlightsSection = ({ className }: { className?: string }) => {
         const bg = bgRef.current;
         if (!set || !canvas || !project || !bg) return;
 
-        // Use function callbacks that read from cached ref - this prevents excessive window.innerHeight calls
-        // but still allows ScrollTrigger to recalculate correctly
+        // Use function callbacks that read window.innerHeight directly
+        // These are only called during ScrollTrigger.refresh() which is already debounced by ScrollSmootherProvider
+        // This is more performant than maintaining a separate resize handler
         const getEndPin = () => {
-          const result = `+=${heightRef.current * 1.5}`;
-          // #region agent log - getEndPin called (throttled)
-          // Only log occasionally to reduce overhead
-          if (Math.random() < 0.01) {
-            fetch(
-              "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  location: "HighlightsSection.tsx:105",
-                  message: "getEndPin called",
-                  data: { index, height: heightRef.current, result },
-                  timestamp: Date.now(),
-                  sessionId: "debug-session",
-                  runId: "post-fix-v3",
-                  hypothesisId: "C",
-                }),
-              }
-            ).catch(() => {});
-          }
-          // #endregion
-          return result;
+          return `+=${window.innerHeight * 1.5}`;
         };
 
         const getEndTimeline = () => {
-          const result = `+=${heightRef.current * 2.5}`;
-          // #region agent log - getEndTimeline called (throttled)
-          // Only log occasionally to reduce overhead
-          if (Math.random() < 0.01) {
-            fetch(
-              "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  location: "HighlightsSection.tsx:125",
-                  message: "getEndTimeline called",
-                  data: { index, height: heightRef.current, result },
-                  timestamp: Date.now(),
-                  sessionId: "debug-session",
-                  runId: "post-fix-v3",
-                  hypothesisId: "C",
-                }),
-              }
-            ).catch(() => {});
-          }
-          // #endregion
-          return result;
+          return `+=${window.innerHeight * 2.5}`;
         };
 
         // ===== PIN TIMELINE =====
         gsap.timeline({
           scrollTrigger: {
             trigger: set,
-            start: "top top", // pin starts when canvas touches top
+            start: "top top-=3", // pin starts when canvas touches top
             end: getEndPin,
             pin: true,
             pinSpacing: false,
             scrub: true,
+            pinType: "transform",
             invalidateOnRefresh: true, // Re-enable so ScrollTrigger can recalculate when needed
-            anticipatePin: 1,
           },
         });
 
@@ -516,84 +190,22 @@ export const HighlightsSection = ({ className }: { className?: string }) => {
     // Store context for cleanup
     ctxRef.current = ctx;
 
-    const effectEndTime = performance.now();
-    const effectDuration = effectEndTime - effectStartTime;
-
-    // #region agent log - HighlightsSection effect complete
-    if (effectDuration > 50) {
-      // Only log if effect takes > 50ms
-      fetch(
-        "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            location: "HighlightsSection.tsx:useLayoutEffect-complete",
-            message: "useLayoutEffect complete (slow)",
-            data: {
-              effectDuration: Math.round(effectDuration * 100) / 100,
-              scrollTriggerCount: ScrollTrigger.getAll().length,
-            },
-            timestamp: Date.now(),
-            sessionId: "debug-session",
-            runId: "fps-optimization-v4",
-            hypothesisId: "FPS",
-          }),
-        }
-      ).catch(() => {});
-    }
-    // #endregion
-
-    console.log(window.innerHeight);
-
     return () => {
-      const cleanupStartTime = performance.now();
-      window.removeEventListener("resize", enhancedResizeHandler);
-      window.removeEventListener("scroll", updateActivityTime);
-      window.removeEventListener("mousemove", updateActivityTime);
-      // Note: resize listener for updateActivityTime is already removed above
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
-      }
+      // Resize handling is now done by ScrollSmootherProvider - no cleanup needed
       if (ctxRef.current) {
         ctxRef.current.revert();
       }
-      const cleanupDuration = performance.now() - cleanupStartTime;
-
-      // #region agent log - HighlightsSection cleanup
-      if (cleanupDuration > 10) {
-        // Only log if cleanup takes > 10ms
-        fetch(
-          "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              location: "HighlightsSection.tsx:cleanup",
-              message: "useLayoutEffect cleanup (slow)",
-              data: {
-                cleanupDuration: Math.round(cleanupDuration * 100) / 100,
-              },
-              timestamp: Date.now(),
-              sessionId: "debug-session",
-              runId: "fps-optimization-v4",
-              hypothesisId: "FPS",
-            }),
-          }
-        ).catch(() => {});
-      }
-      // #endregion
     };
-  }, [sets]);
+  }, []);
 
   return (
     <section
       ref={sectionRef}
       className={classNames(styles.highlightsSection, {}, [className])}
+      id="works"
     >
       <HighlightsInfo />
-      {/* <div style={{ height: "4vh" }} /> */}
+      {/* <div style={{ height: "4dvh" }} /> */}
       {sets.map((set, i) => (
         <div
           key={i}
@@ -609,7 +221,12 @@ export const HighlightsSection = ({ className }: { className?: string }) => {
             href={set.href}
             containerRef={set.canvasRef}
           />
-          <HighlightProject containerRef={set.projectRef} color={set.color} />
+          <HighlightProject
+            containerRef={set.projectRef}
+            color={set.color}
+            video={set.video}
+            href={set.href}
+          />
         </div>
       ))}
     </section>

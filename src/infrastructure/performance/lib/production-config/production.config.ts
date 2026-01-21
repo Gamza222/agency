@@ -274,7 +274,7 @@ export function generateEnvironmentConfig(
         endTime - startTime < 1 ? PerformanceRating.GOOD : PerformanceRating.NEEDS_IMPROVEMENT,
     });
 
-    return config!;
+    return config;
   } catch (error) {
     performanceMonitor.addMetric({
       name: 'environment_config_generation_error',

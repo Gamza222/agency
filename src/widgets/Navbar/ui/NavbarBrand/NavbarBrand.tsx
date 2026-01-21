@@ -1,21 +1,28 @@
-"use client";
-
-import React, { memo } from "react";
+import { memo } from "react";
 import WarpLogo from "@/shared/assets/icons/logo-bg-01.svg?react";
 import styles from "./NavbarBrand.module.scss";
+import { classNames } from "@/shared/lib/utils/classNames/classNames";
 // import { Text, TextVariant } from "@/shared/ui/Text"; // Unused - removed
-import { Link } from "react-router-dom";
 
 interface NavbarBrandProps {
   brandText?: string;
+  isOnLightBackground?: boolean;
 }
 
 const NavbarBrand = memo(
-  ({ brandText: _brandText = "THE WARP" }: NavbarBrandProps) => {
+  ({
+    brandText: _brandText = "THE WARP",
+    isOnLightBackground = false,
+  }: NavbarBrandProps) => {
     return (
-      <Link href="/" className={styles.navbar__brand}>
-        <WarpLogo className={styles.navbar__logo} />
-      </Link>
+      <a href="#" className={styles.navbar__brand}>
+        <WarpLogo
+          className={classNames(styles.navbar__logo, {
+            [styles.navbar__logo_lightBackground]:
+              isOnLightBackground,
+          })}
+        />
+      </a>
     );
   }
 );

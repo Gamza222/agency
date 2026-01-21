@@ -33,7 +33,7 @@ export const AboutInfo = () => {
           yPercent: 0,
           rotate: 0,
           transformOrigin: "0% 50%",
-          ease: "none",
+          ease: "power1.out",
           scrollTrigger: {
             trigger: el,
             start: "top bottom",
@@ -44,29 +44,7 @@ export const AboutInfo = () => {
         }
       );
 
-      // ===== EXIT =====
-      //   gsap.fromTo(
-      //     el,
-      //     {
-      //       xPercent: 0,
-      //       yPercent: 0,
-      //       rotate: 0,
-      //       transformOrigin: "100% 50%",
-      //     },
-      //     {
-      //       xPercent: -10,
-      //       yPercent: -5,
-      //       rotate: -4,
-      //       ease: "power1.out",
-      //       scrollTrigger: {
-      //         trigger: el,
-      //         start: "top 37%",
-      //         end: "top -100%", // 👈 растянули далеко вниз
-      //         scrub: true,
-      //         invalidateOnRefresh: true,
-      //       },
-      //     }
-      //   );
+
     }, containerRef);
 
     return () => ctx.revert();

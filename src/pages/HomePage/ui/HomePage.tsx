@@ -1,252 +1,272 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  memo,
+  useLayoutEffect,
+} from "react";
+import gsap from "gsap";
+import { CustomEase } from "gsap/CustomEase";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { LoadingScreen, LoadingScreenMode } from "@/widgets/LoadingScreen";
-import { VideoBackground } from "@/widgets/VideoBackground";
-// import { Highlights } from "@/widgets/Highlights";
+import { AppBackground } from "@/widgets/AppBackground";
 import styles from "./HomePage.module.scss";
 import { HighlightsSection } from "@/widgets/HighlightsSection";
 import { AboutSection } from "@/widgets/AboutSection";
 import { PromoSection } from "@/widgets/PromoSection";
+import { ContactSection } from "@/widgets/ContactSection";
+import {
+  SCROLL_ANIMATION_TRANSFORMS,
+  SCROLL_ANIMATION_BREAKPOINT,
+} from "@/widgets/LoadingScreen/lib/constants/scroll-animation.constants";
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(CustomEase);
 
 interface HomePageProps {}
 
 export const HomePage = memo((props: HomePageProps) => {
-  // const {} = props;
-  // const [animationsComplete, setAnimationsComplete] = useState(false);
-  // const [videoShouldStart, setVideoShouldStart] = useState(false);
-  // const [scrollProgress, setScrollProgress] = useState(0);
-  // const pageRef = useRef<HTMLElement>(null);
-  // const loadingScreenElementRef = useRef<HTMLElement | null>(null);
-  // const backgroundOverlayElementRef = useRef<HTMLDivElement | null>(null);
+  const {} = props;
+  const [animationsComplete, setAnimationsComplete] = useState(false);
+  const [videoShouldStart, setVideoShouldStart] = useState(false);
+  const [refsReady, setRefsReady] = useState(false);
+  const pageRef = useRef<HTMLElement>(null);
+  const loadingScreenRef = useRef<HTMLDivElement | null>(null);
+  const backgroundOverlayRef = useRef<HTMLDivElement>(null);
+  const videoBackgroundRef = useRef<HTMLDivElement>(null);
 
-  // // Track which animations have completed
-  // const animationStatus = useRef({ background: false, loading: false });
+  // Track which animations have completed
+  const animationStatus = useRef({ background: false, loading: false });
 
-  // // Always start at top on page load/reload
-  // useEffect(() => {
-  //   if ("scrollRestoration" in history) {
-  //     history.scrollRestoration = "manual";
-  //   }
-  //   window.scrollTo(0, 0);
-  // }, []);
+  // Always start at top on page load/reload
+  useEffect(() => {
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+  }, []);
 
-  // const checkAllComplete = useCallback(() => {
-  //   const { background, loading } = animationStatus.current;
-  //   if (background && loading) {
-  //     setAnimationsComplete(true);
-  //   }
-  // }, []);
+  // Set body background color after component mounts
+  useEffect(() => {
+    document.getElementById('red')!.style.display = "none";
+    
+    return () => {
+      // Optionally reset on unmount if needed
+      // document.body.style.backgroundColor = "";
+    };
+  }, []);
 
-  // const handleBackgroundComplete = useCallback(() => {
-  //   animationStatus.current.background = true;
-  //   checkAllComplete();
-  // }, [checkAllComplete]);
+  const checkAllComplete = useCallback(() => {
+    const { background, loading } = animationStatus.current;
+    if (background && loading) {
+      setAnimationsComplete(true);
+    }
+  }, []);
 
-  // const handleLoadingComplete = useCallback(() => {
-  //   animationStatus.current.loading = true;
-  //   setVideoShouldStart(true);
-  //   checkAllComplete();
-  // }, [checkAllComplete]);
+  const handleLoadingComplete = useCallback(() => {
+    animationStatus.current.loading = true;
+    setVideoShouldStart(true); // Start VideoBackground after LoadingScreen completes
+    checkAllComplete();
+  }, [checkAllComplete]);
 
-  // // Disable scroll while animations are running
-  // useEffect(() => {
-  //   if (!animationsComplete) {
-  //     document.body.style.overflow = "hidden";
-  //     document.documentElement.style.overflow = "hidden";
-  //   } else {
-  //     document.body.style.overflow = "";
-  //     document.documentElement.style.overflow = "";
-  //   }
+  const handleBackgroundComplete = useCallback(() => {
+    animationStatus.current.background = true;
+    checkAllComplete();
+  }, [checkAllComplete]);
 
-  //   return () => {
-  //     document.body.style.overflow = "";
-  //     document.documentElement.style.overflow = "";
-  //   };
-  // }, [animationsComplete]);
+  // Disable scroll while animations are running
+  useEffect(() => {
+    if (!animationsComplete) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      // Prevent scroll with touch events on mobile
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.top = "0";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
+    }
 
-  // // Sync animation state to body for navbar
-  // useEffect(() => {
-  //   document.body.setAttribute(
-  //     "data-animations-complete",
-  //     String(animationsComplete)
-  //   );
-  //   document.body.setAttribute("data-is-loading", String(!animationsComplete));
-  // }, [animationsComplete]);
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
+    };
+  }, [animationsComplete]);
 
-  // // Cache element references to avoid querySelector on every RAF frame
-  // // Update refs when animations complete (elements become available)
-  // useEffect(() => {
-  //   if (animationsComplete) {
-  //     // Cache LoadingScreen element reference
-  //     if (!loadingScreenElementRef.current) {
-  //       loadingScreenElementRef.current = document.querySelector(
-  //         '[class*="loadingScreen_scrollAnimated"]'
-  //       ) as HTMLElement | null;
-  //     }
-  //   }
-  // }, [animationsComplete]);
+  // Sync animation state to body for navbar
+  useEffect(() => {
+    document.body.setAttribute(
+      "data-animations-complete",
+      String(animationsComplete)
+    );
+    document.body.setAttribute("data-is-loading", String(!animationsComplete));
+  }, [animationsComplete]);
 
-  // useEffect(() => {
-  //   if (!animationsComplete) return;
+  // Check when refs are ready (for production timing fix)
+  useEffect(() => {
+    if (
+      animationsComplete &&
+      loadingScreenRef.current &&
+      backgroundOverlayRef.current &&
+      pageRef.current
+    ) {
+      setRefsReady(true);
+    } else {
+      setRefsReady(false);
+    }
+  }, [animationsComplete]);
 
-  //   // Slide-out transform values
-  //   // Desktop values
-  //   const DESKTOP_TRANSLATE_X = -30; // percentage
-  //   const DESKTOP_TRANSLATE_Y = -120; // percentage
-  //   const DESKTOP_ROTATION = -8; // degrees
+  // Check when refs are ready (for production timing fix)
+  // Ensures HighlightsSection and first set are loaded before setting up ScrollTrigger
+  useEffect(() => {
+    const highlightsSection = document.querySelector('#works') as HTMLElement;
+    const firstSet = highlightsSection?.querySelector('[class*="highlightsSection__container"]') as HTMLElement;
+    
+    if (
+      animationsComplete &&
+      loadingScreenRef.current &&
+      backgroundOverlayRef.current &&
+      pageRef.current &&
+      videoBackgroundRef.current &&
+      highlightsSection &&
+      firstSet
+    ) {
+      setRefsReady(true);
+    } else {
+      setRefsReady(false);
+    }
+  }, [animationsComplete]);
 
-  //   // Mobile values
-  //   const MOBILE_TRANSLATE_X = -100; // percentage
-  //   const MOBILE_TRANSLATE_Y = -150; // percentage
-  //   const MOBILE_ROTATION = -15; // degrees
+  // GSAP ScrollTrigger animation for loading screen, background overlay, and VideoBackground pinning
+  useLayoutEffect(() => {
+    if (!animationsComplete || !refsReady) return; // Wait for refs to be ready
 
-  //   let rafId: number | null = null;
-  //   let isScheduled = false;
-  //   let lastStateUpdateTime = 0;
-  //   let lastTransformString = ""; // Cache last transform to avoid unnecessary updates
-  //   let rafCallbackCount = 0; // Track how many RAF callbacks have executed
+    const loadingScreenEl = loadingScreenRef.current;
+    const backgroundOverlayEl = backgroundOverlayRef.current;
+    const videoBackgroundEl = videoBackgroundRef.current;
+    const pageEl = pageRef.current;
 
-  //   const handleScroll = () => {
-  //     if (isScheduled) return;
-  //     isScheduled = true;
+    if (
+      !loadingScreenEl ||
+      !backgroundOverlayEl ||
+      !videoBackgroundEl ||
+      !pageEl
+    )
+      return;
 
-  //     rafId = requestAnimationFrame(() => {
-  //       rafCallbackCount++;
-  //       isScheduled = false;
+    const ctx = gsap.context(() => {
+      // Helper function to get transform values based on viewport width
+      const getTransformValues = () => {
+        const isMobile = window.innerWidth < SCROLL_ANIMATION_BREAKPOINT;
+        return isMobile
+          ? SCROLL_ANIMATION_TRANSFORMS.MOBILE
+          : SCROLL_ANIMATION_TRANSFORMS.DESKTOP;
+      };
 
-  //       const rafStart = performance.now();
-  //       const scrollTop = window.scrollY;
-  //       const viewportHeight = window.innerHeight;
-  //       const progress = Math.min(1, Math.max(0, scrollTop / viewportHeight));
+      CustomEase.create("scrollCurve", "M0,0 C0.482,0 0.717,-0.016 0.836,0.108 0.972,0.251 0.972,0.518 1,1");
 
-  //       // Determine if mobile based on viewport width
-  //       const isMobile = window.innerWidth < 1020;
+      const createScrollAnimation = (element: HTMLElement) => {
+        const values = getTransformValues();
+        
+        return gsap.fromTo(
+          element,
+          {
+            xPercent: 0,
+            yPercent: 0,
+            rotation: 0,
+            transformOrigin: "0% 100%",
+          },
+          {
+            xPercent: values.TRANSLATE_X,
+            yPercent: values.TRANSLATE_Y,
+            rotation: values.ROTATION,
+            transformOrigin: "0% 100%",
+            // THIS IS THE KEY:
+            ease: "power1.in", 
+            scrollTrigger: {
+              trigger: pageEl,
+              start: "top top",
+              end: () => `+=${window.innerHeight * 1.1}`,
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+          }
+        );
+      };
 
-  //       // Calculate transform values in JavaScript (no CSS calc())
-  //       const translateX = isMobile ? MOBILE_TRANSLATE_X : DESKTOP_TRANSLATE_X;
-  //       const translateY = isMobile ? MOBILE_TRANSLATE_Y : DESKTOP_TRANSLATE_Y;
-  //       const rotation = isMobile ? MOBILE_ROTATION : DESKTOP_ROTATION;
 
-  //       const translateXValue = (translateX * progress).toFixed(2);
-  //       const translateYValue = (translateY * progress).toFixed(2);
-  //       const rotationValue = (rotation * progress).toFixed(2);
+      // Animate loading screen and background overlay
+      createScrollAnimation(loadingScreenEl);
+      createScrollAnimation(backgroundOverlayEl);
 
-  //       const transformString = `translate3d(${translateXValue}%, ${translateYValue}%, 0) rotate(${rotationValue}deg)`;
+      // Pin VideoBackground until first pre-canvas finishes entrance
+      // Use endTrigger to coordinate with HighlightsSection's first set
+      // refsReady ensures HighlightsSection and first set exist
+      const highlightsSection = document.querySelector("#works") as HTMLElement;
+      const firstSet = highlightsSection.querySelector(
+        '[class*="highlightsSection__container"]'
+      ) as HTMLElement;
 
-  //       // #region agent log - measure transform update cost
-  //       const transformUpdateStart = performance.now();
-  //       const transformChanged = transformString !== lastTransformString;
-  //       // #endregion
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: pageEl,
+          start: "top top",
+          endTrigger: firstSet, // Use first set as end trigger
+          end: "top top+=200", // End when first set reaches top, plus 200px safety margin
+          pin: videoBackgroundEl,
+          pinSpacing: false,
+          pinType: "transform",
+          invalidateOnRefresh: true, // Handles resizes automatically
+        },
+      });
+    }, pageRef);
 
-  //       // Only update if transform string actually changed (avoids unnecessary style updates in Safari)
-  //       if (transformChanged) {
-  //         lastTransformString = transformString;
-
-  //         // Apply transform directly to LoadingScreen (bypasses CSS calc() entirely)
-  //         // Use cached ref to avoid querySelector on every frame
-  //         if (loadingScreenElementRef.current) {
-  //           loadingScreenElementRef.current.style.transform = transformString;
-  //         }
-
-  //         // Apply same transform to backgroundOverlay (also bypasses CSS calc())
-  //         if (backgroundOverlayElementRef.current) {
-  //           backgroundOverlayElementRef.current.style.transform =
-  //             transformString;
-  //         }
-  //       }
-
-  //       // #region agent log - THROTTLED to every 100ms to reduce overhead
-  //       const transformUpdateTime = performance.now() - transformUpdateStart;
-  //       const rafTime = performance.now() - rafStart;
-  //       // #endregion
-
-  //       // Throttle React state updates to prevent excessive re-renders
-  //       // Only update state every 100ms (instead of every scroll event ~16ms)
-  //       // This allows LoadingScreen's will-change logic to work, but with 6x fewer re-renders
-  //       const now = performance.now();
-  //       if (now - lastStateUpdateTime > 100) {
-  //         // Only log every 100ms to reduce console.log/fetch overhead
-  //         const logData = {
-  //           location: "HomePage.tsx:RAF",
-  //           message:
-  //             "Transform update timing (no CSS calc, with change detection, no will-change)",
-  //           data: {
-  //             progress,
-  //             transformUpdateTime: transformUpdateTime.toFixed(2),
-  //             rafTime: rafTime.toFixed(2),
-  //             isMobile,
-  //             transformChanged,
-  //             rafCallbackCount,
-  //           },
-  //           timestamp: Date.now(),
-  //           sessionId: "debug-session-4",
-  //           runId: "run4",
-  //           hypothesisId: "I",
-  //         };
-  //         console.log("[DEBUG]", logData);
-  //         fetch(
-  //           "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-  //           {
-  //             method: "POST",
-  //             headers: { "Content-Type": "application/json" },
-  //             body: JSON.stringify(logData),
-  //           }
-  //         ).catch(() => {});
-
-  //         setScrollProgress(progress);
-  //         lastStateUpdateTime = now;
-  //       }
-  //     });
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll, { passive: true });
-  //   window.addEventListener("resize", handleScroll, { passive: true }); // Recalculate on resize (mobile/desktop switch)
-  //   handleScroll(); // Initial call
-
-  //   return () => {
-  //     // CRITICAL: Cancel any pending RAF before cleanup
-  //     if (rafId !== null) {
-  //       cancelAnimationFrame(rafId);
-  //       rafId = null;
-  //     }
-  //     window.removeEventListener("scroll", handleScroll);
-  //     window.removeEventListener("resize", handleScroll);
-  //     // Reset state to prevent accumulation
-  //     isScheduled = false;
-  //     lastTransformString = "";
-  //     rafCallbackCount = 0;
-  //   };
-  // }, [animationsComplete]);
-
-  // TEST: Removed will-change - it might cause Safari to maintain expensive composite layers
-  // const shouldUseWillChange = useMemo(
-  //   () => animationsComplete && scrollProgress > 0 && scrollProgress < 1,
-  //   [animationsComplete, scrollProgress]
-  // );
+    return () => {
+      ctx.revert(); // Cleanup all GSAP animations and ScrollTriggers
+    };
+  }, [animationsComplete, refsReady]); // Wait for refs to be ready
 
   return (
     <main
+      ref={pageRef}
       className={styles.page}
       style={{ ["--scroll-progress" as string]: "0" }}
     >
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "blue",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "white",
-          fontSize: "2rem",
-        }}
-      >
-        HomePage Content - Blue Section
-      </div>
+      <section id="home">
+        <div ref={videoBackgroundRef}>
+          <AppBackground
+            onAnimationComplete={handleBackgroundComplete}
+            onLoadComplete={() => {
+              // Handle load complete if needed
+            }}
+            shouldStart={videoShouldStart}
+          />
+        </div>
+        <div ref={backgroundOverlayRef} className={styles.backgroundOverlay} />
+
+        <LoadingScreen
+          externalContainerRef={loadingScreenRef}
+          onAnimationComplete={handleLoadingComplete}
+          animationsComplete={animationsComplete}
+          mode={LoadingScreenMode.HOMEPAGE}
+        />
+      </section>
+      <div className={styles.videoSpacer} />
       <HighlightsSection />
-      <div style={{ height: "43vh" }} />
+      <div style={{ height: "43dvh" }} />
       <AboutSection />
       <PromoSection />
+      <ContactSection />
     </main>
   );
 });

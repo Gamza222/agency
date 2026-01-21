@@ -20,10 +20,10 @@ export {
   getVersionDisplay,
   parseVersion,
   calculateVersionCode,
-} from './utils';
+} from './utils.ts';
 
 // Version configuration
-export { versionConfig, validateVersionConfig } from './config';
+export { versionConfig, validateVersionConfig } from './config.ts';
 
 // ============================================================================
 // TYPE EXPORTS - For TypeScript usage
@@ -35,7 +35,7 @@ export type {
   ChangelogEntry,
   VersionHistory,
   VersionConfig,
-} from './types';
+} from './types.ts';
 
 // ============================================================================
 // ADVANCED EXPORTS - For advanced usage
@@ -49,10 +49,10 @@ export {
   saveVersionHistory,
   bumpVersionComplete,
   isPrerelease,
-} from './utils';
+} from './utils.ts';
 
 // ============================================================================
 // DEFAULT EXPORT - Main configuration instance
 // ============================================================================
 
-export { versionConfig as default } from './config';
+export { versionConfig as default } from './config.ts';

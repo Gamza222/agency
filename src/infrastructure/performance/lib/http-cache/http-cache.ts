@@ -227,7 +227,7 @@ export function getCacheStrategy(resourceType: string): CacheStrategyConfig {
         endTime - startTime < 1 ? PerformanceRating.GOOD : PerformanceRating.NEEDS_IMPROVEMENT,
     });
 
-    return strategy!;
+    return strategy;
   } catch (error) {
     performanceMonitor.addMetric({
       name: 'cache_strategy_lookup_error',
@@ -236,7 +236,7 @@ export function getCacheStrategy(resourceType: string): CacheStrategyConfig {
       rating: PerformanceRating.POOR,
     });
 
-    return CACHE_STRATEGIES.dynamic!;
+    return CACHE_STRATEGIES.dynamic;
   }
 }
 

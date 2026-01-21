@@ -7,6 +7,7 @@
   padding-bottom: 2px;
   width: 100%;
   overflow: hidden;
+  cursor: pointer;
 
   // Underline
   &::after {
@@ -29,7 +30,7 @@
     position: absolute;
     left: 0;
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(calc(var(--font-size-3xl) * -1.8));
     transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
 
     svg {
@@ -102,7 +103,7 @@
 
       // Arrow clone flicks 2 times and disappears
       .animatedLink__arrowClone {
-        transform: translateX(-50px) !important;
+        transform: translateX(calc(var(--font-size-3xl) * -1.8)) !important;
         animation: arrow-clone-flicker-disappear 0.8s ease forwards;
       }
 
@@ -142,11 +143,11 @@
     opacity: 1;
   }
   75% {
-    transform: translateX(50px);
+    transform: translateX(calc(var(--font-size-3xl) * 1.8));
   }
   100% {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateX(calc(var(--font-size-3xl) * 1.8));
   }
 }
 
@@ -181,7 +182,7 @@
 @keyframes arrow-clone-flicker-appear {
   0% {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(calc(var(--font-size-3xl) * -1.8));
   }
   12.5% {
     opacity: 1;
@@ -225,11 +226,11 @@
   }
   75% {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(calc(var(--font-size-3xl) * -1.8));
   }
   100% {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(calc(var(--font-size-3xl) * -1.8));
   }
 }
 

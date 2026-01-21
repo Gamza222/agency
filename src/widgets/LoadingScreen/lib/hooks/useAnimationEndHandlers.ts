@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Ref } from "react";
 import { LoadingScreenMode } from "../../types/types";
 import { EXIT_ANIMATION_DELAY_MS } from "../constants/animation.constants";
 
@@ -7,6 +7,7 @@ interface UseAnimationEndHandlersParams {
   onAnimationComplete?: () => void;
   percentageHideAnimationName: string;
   slideOutRotateAnimationName: string;
+  externalContainerRef?: Ref<HTMLDivElement>;
 }
 
 /**
@@ -18,11 +19,16 @@ export const useAnimationEndHandlers = ({
   onAnimationComplete,
   percentageHideAnimationName,
   slideOutRotateAnimationName,
+  externalContainerRef,
 }: UseAnimationEndHandlersParams) => {
   const percentageRef = useRef<HTMLParagraphElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Only create internal ref for DEFAULT mode (HOMEPAGE uses external ref)
+  const internalContainerRef = useRef<HTMLDivElement>(null);
   const [exitAnimationStarted, setExitAnimationStarted] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+
+  // Use external ref if provided (HOMEPAGE mode), otherwise use internal (DEFAULT mode)
+  const containerRef = externalContainerRef || internalContainerRef;
 
   // Handle percentage hide animation end
   useEffect(() => {
@@ -52,8 +58,11 @@ export const useAnimationEndHandlers = ({
   // Handle exit animation end (DEFAULT mode only)
   // This only hides the component after exit animation completes
   // Events are already enabled from percentage hide animation end
+  // Note: For HOMEPAGE mode, externalContainerRef is provided but not used here
   useEffect(() => {
-    if (!containerRef.current || mode !== LoadingScreenMode.DEFAULT) return;
+    // Only use internal ref for DEFAULT mode (HOMEPAGE doesn't need this listener)
+    if (mode !== LoadingScreenMode.DEFAULT || !internalContainerRef.current)
+      return;
 
     const handleExitEnd = (event: AnimationEvent) => {
       if (event.animationName === slideOutRotateAnimationName) {
@@ -61,7 +70,7 @@ export const useAnimationEndHandlers = ({
       }
     };
 
-    const el = containerRef.current;
+    const el = internalContainerRef.current;
     el.addEventListener("animationend", handleExitEnd);
     return () => el.removeEventListener("animationend", handleExitEnd);
   }, [mode, slideOutRotateAnimationName]);

@@ -21,7 +21,7 @@ export const FPSMonitor: React.FC<FPSMonitorProps> = ({
   const rafIdRef = useRef<number>();
 
   useEffect(() => {
-    let frameTimeHistory: number[] = [];
+    const frameTimeHistory: number[] = [];
     let lastFrameTime = performance.now();
 
     const measureFPS = (currentTime: number) => {
@@ -77,20 +77,24 @@ export const FPSMonitor: React.FC<FPSMonitorProps> = ({
 
         // Defer expensive operations (canvas queries, JSON.stringify, fetch) to avoid blocking main thread
         // This prevents 6+ second frame times that were causing FPS drops
-        const scheduleIdleWork = (callback: () => void) => {
-          if (typeof requestIdleCallback !== "undefined") {
-            requestIdleCallback(callback, { timeout: 100 });
-          } else {
-            // Fallback for browsers without requestIdleCallback
-            setTimeout(callback, 0);
-          }
-        };
-        scheduleIdleWork(() => {
-          // Calculate GPU memory usage from canvas elements
-          // Check both visible and hidden canvases - use a more reliable method
-          const canvases = document.querySelectorAll("canvas");
+        // Only calculate GPU memory every 5 seconds to reduce overhead
+        const shouldCalculateGPU = frameCountRef.current % 5 === 0; // Every 5 seconds
+        
+        if (shouldCalculateGPU) {
+          const scheduleIdleWork = (callback: () => void) => {
+            if (typeof requestIdleCallback !== "undefined") {
+              requestIdleCallback(callback, { timeout: 100 });
+            } else {
+              // Fallback for browsers without requestIdleCallback
+              setTimeout(callback, 0);
+            }
+          };
+          scheduleIdleWork(() => {
+            // Calculate GPU memory usage from canvas elements
+            // Check both visible and hidden canvases - use a more reliable method
+            const canvases = document.querySelectorAll("canvas");
           let totalCanvasMemory = 0;
-          let maxCanvasDimensions = { width: 0, height: 0 };
+          const maxCanvasDimensions = { width: 0, height: 0 };
           let activeCanvasCount = 0;
           let totalPixels = 0;
           const canvasDetails: Array<{
@@ -105,7 +109,7 @@ export const FPSMonitor: React.FC<FPSMonitorProps> = ({
           }> = [];
 
           canvases.forEach((canvas, index) => {
-            const htmlCanvas = canvas as HTMLCanvasElement;
+            const htmlCanvas = canvas;
             const canvasId = htmlCanvas.id || `canvas-${index}`;
             const rect = htmlCanvas.getBoundingClientRect();
             const isVisible = rect.width > 0 && rect.height > 0;
@@ -146,69 +150,73 @@ export const FPSMonitor: React.FC<FPSMonitorProps> = ({
               }
             }
           });
-          const totalCanvasMemoryMB = totalCanvasMemory / (1024 * 1024);
+            const totalCanvasMemoryMB = totalCanvasMemory / (1024 * 1024);
 
-          // Log to server (deferred to avoid blocking)
-          if (logToServer) {
-            // Defer JSON.stringify and fetch to next tick to avoid blocking
-            setTimeout(() => {
-              fetch(
-                "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
-                {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    location: "FPSMonitor.tsx",
-                    message: "Global FPS and GPU memory measurement",
-                    data: {
-                      fps,
-                      avgFPS: Math.round(avgFPS),
-                      minFPS: Math.min(...fpsHistoryRef.current),
-                      maxFPS: Math.max(...fpsHistoryRef.current),
-                      history: fpsHistoryRef.current,
-                      targetFPS: 60,
-                      belowTarget: fps < 60,
-                      frameTime: {
-                        avg: Math.round(avgFrameTime * 100) / 100,
-                        max: Math.round(maxFrameTime * 100) / 100,
-                        min: Math.round(minFrameTime * 100) / 100,
-                        slowFrames,
-                        slowFramePercent: Math.round(
-                          (slowFrames / frameTimeHistory.length) * 100
-                        ),
-                        // Frame time variance metrics to detect "freezing" feeling
-                        stdDev: Math.round(frameTimeStdDev * 100) / 100,
-                        jitter: Math.round(frameTimeJitter * 100) / 100,
-                        spikes: frameTimeSpikes,
-                        spikePercent: Math.round(
-                          (frameTimeSpikes / frameTimeHistory.length) * 100
-                        ),
-                        // Flag if jitter is high (indicates freezing feeling despite 60 FPS)
-                        highJitter: frameTimeJitter > 5, // More than 5ms variance indicates stuttering
+            // Log to server (deferred to avoid blocking)
+            // Only log if there are performance issues to reduce overhead
+            if (logToServer && (fps < 60 || frameTimeJitter > 5 || frameTimeStdDev > 3 || frameTimeSpikes > 0)) {
+              // Defer JSON.stringify and fetch to next tick to avoid blocking
+              setTimeout(() => {
+                fetch(
+                  "http://127.0.0.1:7242/ingest/2f0f0f2d-65d2-4907-9100-b44f0fe9f9bb",
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      location: "FPSMonitor.tsx",
+                      message: "Global FPS and GPU memory measurement",
+                      data: {
+                        fps,
+                        avgFPS: Math.round(avgFPS),
+                        minFPS: Math.min(...fpsHistoryRef.current),
+                        maxFPS: Math.max(...fpsHistoryRef.current),
+                        history: fpsHistoryRef.current,
+                        targetFPS: 60,
+                        belowTarget: fps < 60,
+                        frameTime: {
+                          avg: Math.round(avgFrameTime * 100) / 100,
+                          max: Math.round(maxFrameTime * 100) / 100,
+                          min: Math.round(minFrameTime * 100) / 100,
+                          slowFrames,
+                          slowFramePercent: Math.round(
+                            (slowFrames / frameTimeHistory.length) * 100
+                          ),
+                          // Frame time variance metrics to detect "freezing" feeling
+                          stdDev: Math.round(frameTimeStdDev * 100) / 100,
+                          jitter: Math.round(frameTimeJitter * 100) / 100,
+                          spikes: frameTimeSpikes,
+                          spikePercent: Math.round(
+                            (frameTimeSpikes / frameTimeHistory.length) * 100
+                          ),
+                          // Flag if jitter is high (indicates freezing feeling despite 60 FPS)
+                          highJitter: frameTimeJitter > 5, // More than 5ms variance indicates stuttering
+                          // Additional jitter detection - flag if stdDev is high (more sensitive)
+                          highVariance: frameTimeStdDev > 3, // More than 3ms stdDev indicates inconsistent frame times
+                        },
+                        gpuMemory: {
+                          totalCanvasMemoryMB:
+                            Math.round(totalCanvasMemoryMB * 100) / 100,
+                          canvasCount: canvases.length,
+                          activeCanvasCount,
+                          maxCanvasWidth: maxCanvasDimensions.width,
+                          maxCanvasHeight: maxCanvasDimensions.height,
+                          windowWidth: window.innerWidth,
+                          windowHeight: window.innerHeight,
+                          canvasDetails,
+                          totalPixels,
+                        },
                       },
-                      gpuMemory: {
-                        totalCanvasMemoryMB:
-                          Math.round(totalCanvasMemoryMB * 100) / 100,
-                        canvasCount: canvases.length,
-                        activeCanvasCount,
-                        maxCanvasWidth: maxCanvasDimensions.width,
-                        maxCanvasHeight: maxCanvasDimensions.height,
-                        windowWidth: window.innerWidth,
-                        windowHeight: window.innerHeight,
-                        canvasDetails,
-                        totalPixels,
-                      },
-                    },
-                    timestamp: Date.now(),
-                    sessionId: "debug-session",
-                    runId: "fps-optimization-v4",
-                    hypothesisId: "FPS",
-                  }),
-                }
-              ).catch(() => {});
-            }, 0);
-          }
-        });
+                      timestamp: Date.now(),
+                      sessionId: "debug-session",
+                      runId: "fps-optimization-v4",
+                      hypothesisId: "FPS",
+                    }),
+                  }
+                ).catch(() => {});
+              }, 0);
+            }
+          });
+        }
 
         // Callback
         if (onFPSUpdate) {

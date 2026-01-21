@@ -6,15 +6,6 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  &:before {
-    content: "";
-    position: absolute;
-    bottom: -10%;
-    width: 100%;
-    height: 20%;
-    background-color: var(--color-white);
-    z-index: 9997;
-  }
 }
 
 .aboutSection__content {
@@ -24,15 +15,37 @@
   grid-template-columns: 1fr 1fr;
   gap: clamp(3rem, 6vw, 10rem);
   padding: 0 var(--padding-desktop-side);
-  padding-bottom: 10vh;
+  padding-bottom: 18.5vw;
+  padding-top: clamp(2rem, 2vw, 100rem) !important;
+
   background-color: var(--color-white);
   align-items: flex-start;
   flex: 1;
 
+  &:before {
+    content: "";
+    position: absolute;
+    top: -1dvh;
+    width: 100%;
+    left: 0;
+    height: 2dvh;
+    background-color: var(--color-white);
+  }
+
+  // &:before {
+  //   content: "";
+  //   position: absolute;
+  //   top: -10dvh;
+  //   left: 0;
+  //   width: 100%;
+  //   height: 11dvh;
+  //   background-color: var(--color-white);
+  // }
   @media (max-width: $breakpoint-mobile) {
     grid-template-columns: 1fr;
+    padding-top: clamp(1.5rem, 2vw, 100rem) !important;
     padding: 0 var(--padding-mobile-side);
-    padding-bottom: var(--padding-section-top);
+    padding-bottom: 10rem;
   }
 }
 
@@ -56,6 +69,13 @@
   flex-direction: column;
   gap: clamp(4rem, 5vw, 100rem);
   width: 100%;
+
+  // Child elements will be animated separately - GSAP will control opacity
+  .aboutSection__content__text__paragraph__title,
+  .aboutSection__content__text__paragraph__content,
+  .whatwedoList__Item {
+    // opacity: 0; // Initial state - animated by GSAP
+  }
 }
 
 .aboutSection__textBottom {
@@ -64,6 +84,11 @@
   gap: clamp(0.15rem, 0.3vw, 100rem);
   width: 100%;
   text-transform: uppercase;
+
+  // Child elements will be animated separately - GSAP will control opacity
+  p {
+    // opacity: 0; // Initial state - animated by GSAP
+  }
 }
 
 .aboutSection__content__text__paragraph {
@@ -104,8 +129,6 @@
 
   @media (max-width: $breakpoint-mobile) {
     gap: clamp(3rem, 2.5vw, 100rem);
-    width: 85%;
-    flex-direction: column;
   }
 }
 

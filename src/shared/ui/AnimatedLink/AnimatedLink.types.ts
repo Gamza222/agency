@@ -1,4 +1,4 @@
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 
 export enum AnimatedLinkVariant {
   DEFAULT = "default",
@@ -29,13 +29,15 @@ export enum AnimatedLinkFontWeight {
 }
 export interface AnimatedLinkProps extends HTMLAttributes<HTMLAnchorElement> {
   /** Link href */
-  href: string;
+  href?: string;
   /** Link title/text */
-  title: string;
+  title?: string;
   /** Component variant */
   variant?: AnimatedLinkVariant;
   /** Component size */
   size?: AnimatedLinkSize;
+  mailto?: boolean;
+  icon?: ReactNode;
   /** Component font weight */
   fontWeight?: AnimatedLinkFontWeight;
   /** Additional class name */

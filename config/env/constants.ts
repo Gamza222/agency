@@ -5,7 +5,7 @@
  * Clean, organized constants with better structure.
  */
 
-import { Environment, EnvVariableNames } from './types';
+import { Environment, EnvVariableNames } from './types.ts';
 
 // Core defaults (only essential variables)
 export const CORE_DEFAULTS = {

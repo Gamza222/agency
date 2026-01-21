@@ -1,7 +1,6 @@
 "use client";
 
-import React, { memo, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { memo, useEffect, useState } from "react";
 import { classNames, Mods } from "@/shared/lib/utils/classNames/classNames";
 import {
   NAVBAR_ANIMATION,
@@ -9,22 +8,24 @@ import {
 } from "../../../model/types/constants/constants";
 import styles from "./NavbarMobileLinks.module.scss";
 import { Text, TextSize, TextVariant } from "@/shared/ui/Text";
-import { Link } from "react-router-dom";
 import {
   AnimatedLink,
   AnimatedLinkVariant,
 } from "@/shared/ui/AnimatedLink/AnimatedLink";
 import { AnimatedLinkSize } from "@/shared/ui/AnimatedLink/AnimatedLink.types";
+import { useActiveSection } from "../../../lib/useActiveSection";
+import TgIcon from "@/shared/assets/icons/media/tg.svg?react";
+
 
 interface NavbarMobileLinksProps {
   isOpen: boolean;
+  onLinkClick?: () => void;
   className?: string;
 }
 
 const NavbarMobileLinks = memo(
-  ({ isOpen, className }: NavbarMobileLinksProps) => {
-    const location = useLocation();
-    const pathname = location.pathname;
+  ({ isOpen, onLinkClick, className }: NavbarMobileLinksProps) => {
+    const activeSection = useActiveSection();
     const [shouldRender, setShouldRender] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
@@ -51,20 +52,22 @@ const NavbarMobileLinks = memo(
     if (!shouldRender) return null;
 
     const mods: Mods = {
-      [styles.navbarMobileLinks_closing as string]: isClosing,
+      [styles.navbarMobileLinks_closing]: isClosing,
     };
 
     return (
       <div className={classNames(styles.navbarMobileLinks, mods, [className])}>
-        <nav className={styles.navbarMobileLinks__nav}>
+       <div className={styles.NavbarWrapper}>
+       <nav className={styles.navbarMobileLinks__nav}>
           {NAVBAR_LINKS.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = activeSection === link.href;
             return (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
+                onClick={onLinkClick}
                 className={classNames(styles.navbarMobileLinks__linkWrapper, {
-                  [styles.navbarMobileLinks__linkWrapper_active as string]:
+                  [styles.navbarMobileLinks__linkWrapper_active]:
                     isActive,
                 })}
               >
@@ -79,7 +82,7 @@ const NavbarMobileLinks = memo(
                 >
                   {link.label}
                 </Text>
-              </Link>
+              </a>
             );
           })}
         </nav>
@@ -92,14 +95,21 @@ const NavbarMobileLinks = memo(
           >
             / let's talk
           </Text>
-          <AnimatedLink
-            href="/contact"
-            title="@the_warp_agency"
-            variant={AnimatedLinkVariant.NAVBAR}
-            size={AnimatedLinkSize.XL3}
-            className={styles.navbarMobileLinks__bottomLink}
-          />
+        
+           <AnimatedLink
+                href="https://t.me/thewarpmedia"
+                title="Telegram"
+                
+                size={AnimatedLinkSize.XL3}
+                variant={AnimatedLinkVariant.NAVBAR}
+
+                // fontWeight={AnimatedLinkFontWeight.XL2}
+                className={styles.navbarMobileLinks__bottomLink}
+
+                icon={<TgIcon className={styles.iconTg} />}
+              />
         </div>
+       </div>
       </div>
     );
   }

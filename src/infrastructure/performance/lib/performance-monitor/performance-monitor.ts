@@ -135,5 +135,5 @@ export function getPerformanceTiming() {
  */
 export function getNavigationTiming() {
   const entries = window.performance.getEntriesByType('navigation');
-  return entries && entries.length > 0 ? (entries[0] as PerformanceNavigationTiming) : undefined;
+  return entries && entries.length > 0 ? (entries[0]) : undefined;
 }

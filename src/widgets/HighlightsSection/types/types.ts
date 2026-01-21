@@ -37,4 +37,8 @@ export interface HighlightProjectProps {
   color?: string;
   /** Shared container ref for ScrollTrigger */
   containerRef?: RefObject<HTMLDivElement>;
+  /** Project video */
+  video?: string;
+  /** Project link href */
+  href?: string;
 }

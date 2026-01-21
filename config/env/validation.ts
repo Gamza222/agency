@@ -5,9 +5,9 @@
  * Clean, focused validation logic.
  */
 
-import { Environment, EnvValidationResult, EnvVariableNames } from './types';
-import { ENV_DEFAULTS, ENV_VALIDATION_RULES, REQUIRED_ENV_VARS } from './constants';
-import { getNodeEnv, getEnv } from './env-utils';
+import { Environment, EnvValidationResult, EnvVariableNames } from './types.ts';
+import { ENV_DEFAULTS, ENV_VALIDATION_RULES, REQUIRED_ENV_VARS } from './constants.ts';
+import { getNodeEnv, getEnv } from './env-utils.ts';
 
 /**
  * Get current environment from NODE_ENV

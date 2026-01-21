@@ -66,7 +66,7 @@ export const useHomePageAnimations = ({
     if (animationsComplete && !loadingScreenRef.current) {
       loadingScreenRef.current = document.querySelector(
         '[class*="loadingScreen_scrollAnimated"]'
-      ) as HTMLElement | null;
+      );
     }
   }, [animationsComplete, loadingScreenRef]);
 };

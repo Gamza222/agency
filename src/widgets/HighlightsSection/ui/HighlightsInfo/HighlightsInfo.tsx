@@ -41,7 +41,7 @@ export const HighlightsInfo = () => {
           yPercent: 0,
           rotate: 0,
           transformOrigin: "0% 50%",
-          ease: "none",
+          ease: "power1.out",
           scrollTrigger: {
             trigger: el,
             start: "top bottom",

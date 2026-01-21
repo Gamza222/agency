@@ -4,8 +4,8 @@
  * Tests for environment configuration system.
  */
 
-import { envConfig, getEnvVariable, isDevelopment, isPreview, isProduction, isTest } from './index';
-// import { Environment } from './types'; // Unused
+import { envConfig, getEnvVariable, isDevelopment, isPreview, isProduction, isTest } from './index.ts';
+// import { Environment } from './types.ts'; // Unused
 
 // Mock process.env
 const originalEnv = process.env;

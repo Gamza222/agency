@@ -18,10 +18,11 @@ export const NAVBAR_BREAKPOINTS = {
 } as const;
 
 export const NAVBAR_LINKS = [
-  { label: "home", href: "/" },
-  { label: "works", href: "/works" },
-  { label: "trial", href: "/trial" },
-  { label: "contact", href: "/contact" },
+  { label: "home", href: "#" },
+  { label: "works", href: "#works" },
+  { label: "about", href: "#aboutsection" },
+  { label: "trial", href: "#promosection" },
+  { label: "contact", href: "#contact" },
 ] as const;
 
 export const NAVBAR_STYLING = {

@@ -2,21 +2,82 @@
 
 .promoInfo {
   width: 100%;
-  position: relative;
   display: flex;
-  padding: var(--padding-section-top) var(--padding-desktop-side)
-    clamp(10rem, 16vw, 100rem) var(--padding-desktop-side);
-  background-color: var(--color-white);
-
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(1em, 1.5vw, 100em);
+  margin-top: clamp(0.5rem, 0.7vw, 100em);
+  padding-left: var(--padding-desktop-side);
+  padding-right: var(--padding-desktop-side);
+  padding-bottom: clamp(1.5rem, 2vw, 100rem);
+  row-gap: clamp(1em, 1vw, 100em);
   @media (max-width: $breakpoint-mobile) {
-    padding: var(--padding-section-top) var(--padding-mobile-side)
-      clamp(5rem, 16vw, 100rem) var(--padding-mobile-side);
+    padding-left: var(--padding-mobile-side);
+    padding-right: var(--padding-mobile-side);
+  }
+  // Equal gap - applies to both items and separators
+}
+
+.promoInfo__item {
+  display: flex;
+  align-items: center;
+  gap: 0.2em; // Gap between icon and text within item
+}
+
+.promoInfo__title {
+  display: flex;
+  align-items: center;
+  gap: 0.2em;
+  opacity: 0; // Initial state - animated by GSAP
+}
+
+.promoInfo__separator {
+  margin-right: 0.15em;
+  opacity: 0; // Initial state - animated by GSAP
+}
+
+.promoInfo__item {
+  font-size: var(--font-size-4xl);
+
+  // white-space: nowrap;
+}
+
+.promoInfo__item {
+  svg {
+    transform: translateY(-0.04em);
   }
 }
 
-.promoInfo__content {
-  color: var(--color-white, #fff);
-  text-align: center;
-  width: 100%;
+.promoInfo__icon {
+  height: var(--font-size-4xl);
+  fill: var(--color-black);
+}
+.promoInfo__iconFigma {
+  height: var(--font-size-4xl);
+
+  transform: translateY(0.02em) !important;
+  > g:nth-child(3) path {
+    fill: var(--color-black);
+  }
 }
 
+.promoInfo__iconAffinity {
+  transform: translateY(0.02em) !important;
+  height: var(--font-size-4xl);
+  width: 3.125em;
+  > g {
+    fill: var(--color-black);
+  }
+}
+
+.promoInfo__iconProcreate {
+  fill: var(--color-black);
+  width: 5em;
+  height: var(--font-size-4xl);
+}
+
+.promoInfo__separator {
+  font-size: var(--font-size-4xl);
+  font-weight: 300;
+  line-height: 1;
+}

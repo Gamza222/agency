@@ -7,7 +7,7 @@
 
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { ChangelogEntry, VersionBumpType, VersionInfo } from './types';
+import { ChangelogEntry, VersionBumpType, VersionInfo } from './types.ts';
 
 // Version patterns
 const VERSION_PATTERNS = {

@@ -18,7 +18,7 @@
   padding: clamp(3.5rem, 4vw, 100rem) var(--padding-desktop-side)
     clamp(1.2rem, 1.5vw, 100rem) var(--padding-desktop-side);
   will-change: transform;
-  min-height: 20vh;
+  min-height: 20dvh;
   justify-content: flex-end;
 
   backface-visibility: hidden;
@@ -38,7 +38,12 @@
   width: 100%;
   justify-content: space-between;
   flex-shrink: 0;
+  margin-top: calc(var(--logo-height) * 1.7 + var(--padding-desktop-top) * 2);
 
+  @media (max-width: $breakpoint-mobile) {
+    margin-top: calc(var(--logo-height) * 1.7 + var(--padding-mobile-top) * 2);
+  }
+  
   @media (max-width: 490px) {
     flex-direction: column;
     align-items: flex-start;
@@ -62,7 +67,7 @@
 
 .highlightsPreCanvas__Box {
   position: absolute;
-  height: 100vh;
+  height: 100dvh;
   top: 100%;
   left: 0;
   min-height: 450px;
